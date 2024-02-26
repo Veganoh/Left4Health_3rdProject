@@ -1,0 +1,104 @@
+menu {
+    display: flex;
+    flex-direction: column;
+    background-color: #FBFADA;
+    padding: 0; 
+    margin: 0;
+    height: 100vh;
+}
+
+header {
+    background-color: #12372A;
+    text-align: center;
+    align-content: center;
+    width: 90%;
+    align-self: center;
+    color: white;
+}
+
+.threeholder {
+	position: relative;
+	width: 90%;
+	height:70%;
+    align-self: center;
+    border-left: 15px solid #12372A;
+    border-right: 15px solid #12372A;;
+}
+
+i {
+    size: 500px;
+}
+
+.threeone,
+.threetwo,
+.threethree {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    background: #436850;
+    border-bottom: 15px solid #12372A;
+    transition: all 0.25s;
+    align-items: center;
+}
+
+.threeone:hover h4,
+.threetwo:hover h4,
+.threethree:hover h4{
+	color: black;
+}
+
+.threeone:hover,
+.threetwo:hover,
+.threethree:hover {
+	background: #ADBC9F;
+}
+
+.threeone:hover .circleborder,
+.threetwo:hover .circleborder,
+.threethree:hover .circleborder{
+	background: #ADBC9F;
+}
+
+.threeone:hover .circlepic {
+	background: #12372A;
+}
+
+
+.circleborder {
+	position: absolute;
+	top: 30px;
+	width: 90px;
+	height: 90px;
+	background: #436850;
+	border-radius: 50%;
+}
+.circlepic {
+	position:absolute;
+	top:-10px;
+	margin-top: 30px;
+	width: 110px;
+	height: 110px;
+	background: #12372A;
+	border-radius: 50%;
+}
+
+i {
+    margin-left: 29%;
+    margin-top: 50%;
+}
+
+.threeholder h4 {
+	text-align: center;
+	font-size: 13px;
+	font-weight: bold;
+	text-align: center;
+	color: white;
+    margin-top: 35%;
+}
+.threeholder p {
+	display: inline-block;
+	text-align: center;
+	font-size: 12px;
+	color:#8a8a8a;
+	letter-spacing: 1px;
+}
