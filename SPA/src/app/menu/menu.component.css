@@ -1,18 +1,27 @@
 menu {
     display: flex;
+	position: fixed;
     flex-direction: column;
-    background-color: #FBFADA;
     padding: 0; 
     margin: 0;
-    height: 100vh;
+	margin-top: 5%;
+    height: 100%;
+	width: 100%;
+}
+
+#myVideo {
+	position: fixed;
+	right: 0;
+	bottom: 0;
+	min-width: 100%;
+	min-height: 100%;
 }
 
 header {
     background-color: #12372A;
     text-align: center;
-    align-content: center;
     width: 90%;
-    align-self: center;
+	height: 100%;
     color: white;
 }
 
@@ -21,24 +30,18 @@ header {
 	width: 90%;
 	height:70%;
     align-self: center;
-    border-left: 15px solid #12372A;
-    border-right: 15px solid #12372A;;
+    border: 15px solid #12372A;
 }
 
-i {
-    size: 500px;
-}
 
 .threeone,
 .threetwo,
 .threethree {
-    display: inline-block;
+	align-items: center;
     width: 100%;
     height: 100%;
     background: #436850;
-    border-bottom: 15px solid #12372A;
     transition: all 0.25s;
-    align-items: center;
 }
 
 .threeone:hover h4,
@@ -65,17 +68,14 @@ i {
 
 
 .circleborder {
-	position: absolute;
-	top: 30px;
+	margin-left: 9%;
+	margin-top: 9%;
 	width: 90px;
 	height: 90px;
 	background: #436850;
 	border-radius: 50%;
 }
 .circlepic {
-	position:absolute;
-	top:-10px;
-	margin-top: 30px;
 	width: 110px;
 	height: 110px;
 	background: #12372A;
@@ -88,16 +88,12 @@ i {
 }
 
 .threeholder h4 {
-	text-align: center;
-	font-size: 13px;
+	font-size: 20px;
 	font-weight: bold;
-	text-align: center;
 	color: white;
-    margin-top: 35%;
 }
 .threeholder p {
 	display: inline-block;
-	text-align: center;
 	font-size: 12px;
 	color:#8a8a8a;
 	letter-spacing: 1px;
