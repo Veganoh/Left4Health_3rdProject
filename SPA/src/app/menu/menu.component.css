@@ -25,6 +25,8 @@ menu {
 	width: 100vw;
 	background-color: rgb(243, 247, 251,0.9);
 	margin-bottom: 1%;
+    margin-top: 1%;
+
 }
 
 
@@ -56,6 +58,7 @@ header h1 {
 
 .threeone {
 	align-items: center;
+    text-align: center;
     width: 100vw;
     height: 100%;
     background: rgb(70, 77, 54, 0.3);
@@ -70,6 +73,7 @@ header h1 {
 
 .threetwo {
 	align-items: center;
+    text-align: center;
     width: 100vw;
     height: 100%;
     background: rgb(70, 77, 54, 0.3);
@@ -83,6 +87,8 @@ header h1 {
 
 .threethree {
 	align-items: center;
+    text-align: center;
+
     width: 100vw;
     height: 100%;
     background: rgb(70, 77, 54, 0.3);
@@ -96,6 +102,7 @@ header h1 {
 
 .threefour {
 	align-items: center;
+    text-align: center;
     width: 100vw;
     height: 100%;
     background: rgb(70, 77, 54, 0.3);
@@ -107,23 +114,13 @@ header h1 {
     background-size: cover;
 }
 
-
-
-
-
-.threeone:hover h4,
-.threetwo:hover h4,
-.threethree:hover h4,
-.threefour:hover h4 {
-	color: black;
-}
-
 .threeone:hover,
 .threetwo:hover,
 .threethree:hover,
 .threefour:hover {
-	background: #ADBC9F;
+	background: rgba(86, 102, 71, 0.7);
 }
+
 
 .threeone:hover .circleborder,
 .threetwo:hover .circleborder,
@@ -132,9 +129,43 @@ header h1 {
 	background: #ADBC9F;
 }
 
-.threeone:hover .circlepic {
-	background: #12372A;
+.circlepic {
+    width: 110px;
+    height: 110px;
+    background: rgb(18, 55, 42);
+    border-radius: 50%;
+    opacity: 0;
 }
+
+.threeone:hover .circlepic {
+    opacity: 1;
+}
+
+.threetwo:hover .circlepic {
+    opacity: 1;
+}
+
+.threethree:hover .circlepic {
+    opacity: 1;
+}
+
+/*Test*/
+.threefour:hover h4,
+.threeone:hover h4,
+.threetwo:hover h4,
+.threethree:hover h4 {
+    opacity: 1;
+}
+
+.threefour:hover p,
+.threeone:hover p,
+.threetwo:hover p,
+.threethree:hover p {
+    opacity: 1;
+}
+
+/*Test*/
+
 
 
 .circleborder {
@@ -142,32 +173,32 @@ header h1 {
 	margin-top: 9%;
 	width: 90px;
 	height: 90px;
-	background: #436850;
-	border-radius: 50%;
-}
-.circlepic {
-	width: 110px;
-	height: 110px;
-	background: #12372A;
+	background: #ADBC9F;
 	border-radius: 50%;
 }
 
 i {
-    margin-left: 29%;
     margin-top: 50%;
 }
 
+
+
 .threeholder h4 {
-	font-size: 20px;
+	font-size: 30px;
 	font-weight: bold;
 	color: white;
+    opacity: 0;
 }
+
 .threeholder p {
 	display: inline-block;
-	font-size: 12px;
-	color:#8a8a8a;
+	font-size: 30px;
+	color:#ffffff;
 	letter-spacing: 1px;
+    opacity: 0;
 }
+
+
 
 
 @keyframes gradient {
