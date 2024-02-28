@@ -67,7 +67,7 @@ def process_folders(root_folder, batch_size=1):
 
 # Main function
 def main():
-    root_folder = "../../../Dataset/Dermnet/test"
+    root_folder = "../../../Dataset/Dermnet/train"
     results = process_folders(root_folder)
 
 
