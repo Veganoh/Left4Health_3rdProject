@@ -1,0 +1,112 @@
+{
+  "title": "Understanding Urticaria: Description, Symptoms, Causes, and Treatments",
+  "sections": [
+    {
+      "title": "DESCRIPTION",
+      "content": "Urticaria, also commonly known as hives, is a skin condition characterized by the appearance of raised, red, or pale, itchy welts on the skin. These welts are typically well-defined and vary in size from small bumps to large plaques. They can appear anywhere on the body, and individual welts typically last from minutes to hours before fading. In some cases, new welts may appear as older ones fade."
+    },
+    {
+      "title": "SYMPTOMS",
+      "symptoms": [
+        {
+          "description": "Itchy",
+          "details": "The most common symptom is intense itching, which can be quite bothersome and disruptive."
+        },
+        {
+          "description": "Red or pale",
+          "details": "The welts may appear red or pale, depending on the individual and the cause of the urticaria."
+        },
+        {
+          "description": "Raised",
+          "details": "They are raised above the surrounding skin surface."
+        },
+        {
+          "description": "Well-defined",
+          "details": "They have distinct borders."
+        },
+        {
+          "description": "Variable in size",
+          "details": "They can range from small bumps to large plaques."
+        },
+        {
+          "description": "Transient",
+          "details": "Individual welts typically last minutes to hours before fading."
+        },
+        {
+          "description": "Angioedema",
+          "details": "Swelling deeper in the skin, often affecting the face, lips, tongue, or genitals. Angioedema can cause difficulty breathing if it affects the airway."
+        },
+        {
+          "description": "Abdominal pain, nausea, or vomiting",
+          "details": "These symptoms can occur if the urticaria involves the lining of the digestive tract."
+        },
+        {
+          "description": "Joint pain or swelling",
+          "details": "This is less common but can occur in some cases."
+        }
+      ]
+    },
+    {
+      "title": "CAUSES",
+      "causes": [
+        {
+          "type": "Immunologically mediated",
+          "description": "Involves an immune system response that triggers the release of histamine, leading to the development of welts.",
+          "common_triggers": [
+            "Food allergies",
+            "Medications",
+            "Insect bites or stings",
+            "Latex allergy",
+            "Upper respiratory infections"
+          ]
+        },
+        {
+          "type": "Non-immunologically mediated",
+          "description": "Not directly related to the immune system.",
+          "common_triggers": [
+            "Physical factors",
+            "Underlying medical conditions",
+            "Stress"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "TREATMENTS",
+      "treatments": [
+        {
+          "type": "Antihistamines",
+          "description": "Block the action of histamine, which is responsible for the symptoms of urticaria.",
+          "note": "Mainstay of treatment for most cases of urticaria and are available over-the-counter and by prescription."
+        },
+        {
+          "type": "Corticosteroids",
+          "description": "Can be used in severe cases of urticaria or when antihistamines are not effective.",
+          "note": "Typically not recommended for long-term use due to potential side effects."
+        },
+        {
+          "type": "Other medications",
+          "description": "May be used depending on the cause of the urticaria.",
+          "options": [
+            "H2-receptor antagonists",
+            "Leukotriene receptor antagonists",
+            "Immunosuppressants"
+          ]
+        },
+        {
+          "type": "Identifying and avoiding triggers",
+          "description": "Can help prevent future outbreaks if a specific trigger can be identified.",
+          "note": "Triggers may include certain foods, medications, physical factors, or stress."
+        },
+        {
+          "type": "Lifestyle modifications",
+          "description": "Can also help manage urticaria.",
+          "modifications": [
+            "Stress management",
+            "Wearing loose-fitting clothing"
+          ]
+        }
+      ]
+    }
+  ]
+}
