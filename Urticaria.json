@@ -18,11 +18,7 @@
         {
             "description": "Angioedema",
             "details":  "Angioedema is more often localised. It commonly affects the face (especially eyelids and perioral sites), hands, feet, and genitalia. It may involve tongue, uvula, soft palate, or larynx."
-        },
-        {
-            "description": "Angioedema",
-            "details":  "Angioedema is more often localised. It commonly affects the face (especially eyelids and perioral sites), hands, feet, and genitalia. It may involve tongue, uvula, soft palate, or larynx."
-        },
+        }
       ]
     },
     {
@@ -68,7 +64,7 @@
     },
     {
       "title": "CAUSES",
-      "description": "Weals are due to release of chemical mediators from tissue mast cells and circulating basophils. These chemical mediators include histamine, platelet-activating factor and cytokines. The mediators activate sensory nerves and cause dilation of blood vessels and leakage of fluid into surrounding tissues. Bradykinin release causes angioedema. Several hypotheses have been proposed to explain urticaria. The immune, arachidonic acid and coagulation systems are involved, and genetic mutations are under investigation."
+      "description": "Weals are due to release of chemical mediators from tissue mast cells and circulating basophils. These chemical mediators include histamine, platelet-activating factor and cytokines. The mediators activate sensory nerves and cause dilation of blood vessels and leakage of fluid into surrounding tissues. Bradykinin release causes angioedema. Several hypotheses have been proposed to explain urticaria. The immune, arachidonic acid and coagulation systems are involved, and genetic mutations are under investigation.",
       "causes": [
         {
           "type": "Immunologically mediated",
@@ -149,39 +145,48 @@
             "Stress management",
             "Wearing loose-fitting clothing"
           ]
-        },
-          "title": "DIAGNOSTIC",
-      "diagnostic": [
-        {
-          "type": "Summary",
-          "description": "Urticaria is diagnosed in people with a history of weals that last less than 24 hours with or without angioedema. A medication and family history should be elicited. A thorough physical examination should be undertaken."
-        },
-        {
-          "type": "Tests",
-          "description": "Skin prick tests and radioallergosorbent tests (RAST) or CAP fluoroimmunoassay may be requested if a drug, latex, or food allergy is suspected in acute urticaria.",
-          "note": "Typically not recommended for long-term use due to potential side effects."
-        },
-        {
-          "type": "Routine Test",
-          "description": "There are no routine diagnostic tests in chronic spontaneous urticaria apart from blood count and C-reactive protein (CBC, CRP), but investigations may be undertaken if an underlying disorder is suspected",
-        },
-        {
-          "type": "Tests",
-          "description": "The autologous serum skin test is sometimes carried out in chronic spontaneous urticaria, but its value is uncertain. It is positive if an injection of the patient's serum under the skin causes a red weal.",
-        },
-        {
-          "type": "Tests",
-          "description": "Inducible urticaria is often confirmed by inducing the reaction eg, scratching the skin in dermographism or applying an ice cube in suspected cold urticaria.",
-          
-        },
-         {
-          "type": "Tests",
-          "description": "Investigations for a systemic condition or autoinflammatory disease should be undertaken in urticaria patients with fever, joint or bone pain, and malaise. Patients with angioedema without weals should be asked if they take ACE inhibitor drugs and tested for complement C4; C1-INH levels, function and antibodies; and C1q.",
-        },{
-          "type": "Tests",
-          "description": "Biopsy of urticaria can be non-specific. The pathology shows oedema in the dermis and dilated blood vessels, with a variable mixed inflammatory infiltrate. Vessel-wall damage indicates urticarial vasculitis.",
         }
+      },
+        { "title": "DIAGNOSTIC",
+          "diagnostic": [
+            {
+              "type": "Summary",
+              "description": "Urticaria is diagnosed in people with a history of weals that last less than 24 hours with or without angioedema. A medication and family history should be elicited. A thorough physical examination should be undertaken."
+            },
+            {
+              "type": "Tests",
+              "description": "Skin prick tests and radioallergosorbent tests (RAST) or CAP fluoroimmunoassay may be requested if a drug, latex, or food allergy is suspected in acute urticaria.",
+              "note": "Typically not recommended for long-term use due to potential side effects."
+            },
+            {
+              "type": "Routine Test",
+              "description": "There are no routine diagnostic tests in chronic spontaneous urticaria apart from blood count and C-reactive protein (CBC, CRP), but investigations may be undertaken if an underlying disorder is suspected",
+            },
+            {
+              "type": "Tests",
+              "description": "The autologous serum skin test is sometimes carried out in chronic spontaneous urticaria, but its value is uncertain. It is positive if an injection of the patient's serum under the skin causes a red weal.",
+            },
+            {
+              "type": "Tests",
+              "description": "Inducible urticaria is often confirmed by inducing the reaction eg, scratching the skin in dermographism or applying an ice cube in suspected cold urticaria.",
+              
+            },
+             {
+              "type": "Tests",
+              "description": "Investigations for a systemic condition or autoinflammatory disease should be undertaken in urticaria patients with fever, joint or bone pain, and malaise. Patients with angioedema without weals should be asked if they take ACE inhibitor drugs and tested for complement C4; C1-INH levels, function and antibodies; and C1q.",
+            },{
+              "type": "Tests",
+              "description": "Biopsy of urticaria can be non-specific. The pathology shows oedema in the dermis and dilated blood vessels, with a variable mixed inflammatory infiltrate. Vessel-wall damage indicates urticarial vasculitis.",
+            }
       ]
+      }
+    },
+    {
+       "title": "OUTLOOK",
+       "outlook": {
+             "type": "Summary",
+             "description": "Acute urticaria resolves in hours to days but is often recurrent. Although chronic urticaria clears up in most cases, 15% continue to have wealing at least twice weekly after two years"
+       }
     }
   ]
 }
