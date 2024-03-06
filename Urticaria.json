@@ -145,7 +145,7 @@
             "Stress management",
             "Wearing loose-fitting clothing"
           ]
-        }
+        }]
       },
         { "title": "DIAGNOSTIC",
           "diagnostic": [
@@ -179,7 +179,6 @@
               "description": "Biopsy of urticaria can be non-specific. The pathology shows oedema in the dermis and dilated blood vessels, with a variable mixed inflammatory infiltrate. Vessel-wall damage indicates urticarial vasculitis.",
             }
       ]
-      }
     },
     {
        "title": "OUTLOOK",
