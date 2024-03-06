@@ -3,7 +3,27 @@
   "sections": [
     {
       "title": "DESCRIPTION",
-      "content": "Urticaria, also commonly known as hives, is a skin condition characterized by the appearance of raised, red, or pale, itchy welts on the skin. These welts are typically well-defined and vary in size from small bumps to large plaques. They can appear anywhere on the body, and individual welts typically last from minutes to hours before fading. In some cases, new welts may appear as older ones fade."
+      "content": "Urticaria, also commonly known as hives, is a skin condition characterized by the appearance of raised, red, or pale, itchy welts on the skin. These welts are typically well-defined and vary in size from small bumps to large plaques. They can appear anywhere on the body, and individual welts typically last from minutes to hours before fading. In some cases, new welts may appear as older ones fade. Urticaria is characterised by very itchy weals (hives), with or without surrounding erythematous flares. The name urticaria is derived from the common European stinging nettle Urtica dioica. Urticaria can be acute or chronic, spontaneous or inducible. A weal (or wheal) is a superficial skin-coloured or pale skin swelling, usually surrounded by erythema that lasts anything from a few minutes to 24 hours. Urticaria can co-exist with angioedema which is a deeper swelling within the skin or mucous membranes. "
+    },
+    { "title": "CLINICAL_FEATURES",
+      "features": [
+        {
+            "description": "Summary",
+            "details": "Urticarial weals can be a few millimetres or several centimetres in diameter, coloured white or red, with or without a red flare. Each weal may last a few minutes or several hours and may change shape. Weals may be round, or form rings, a map-like pattern, or giant patches."
+        },
+        {
+            "description": "Body Part",
+            "details":  "Entire Body"
+        },
+        {
+            "description": "Angioedema",
+            "details":  "Angioedema is more often localised. It commonly affects the face (especially eyelids and perioral sites), hands, feet, and genitalia. It may involve tongue, uvula, soft palate, or larynx."
+        },
+        {
+            "description": "Angioedema",
+            "details":  "Angioedema is more often localised. It commonly affects the face (especially eyelids and perioral sites), hands, feet, and genitalia. It may involve tongue, uvula, soft palate, or larynx."
+        },
+      ]
     },
     {
       "title": "SYMPTOMS",
@@ -48,6 +68,7 @@
     },
     {
       "title": "CAUSES",
+      "description": "Weals are due to release of chemical mediators from tissue mast cells and circulating basophils. These chemical mediators include histamine, platelet-activating factor and cytokines. The mediators activate sensory nerves and cause dilation of blood vessels and leakage of fluid into surrounding tissues. Bradykinin release causes angioedema. Several hypotheses have been proposed to explain urticaria. The immune, arachidonic acid and coagulation systems are involved, and genetic mutations are under investigation."
       "causes": [
         {
           "type": "Immunologically mediated",
@@ -57,7 +78,8 @@
             "Medications",
             "Insect bites or stings",
             "Latex allergy",
-            "Upper respiratory infections"
+            "Upper respiratory infections",
+            "Acute urticaria with fever can be the first sign of COVID-19 infection",
           ]
         },
         {
@@ -66,9 +88,31 @@
           "common_triggers": [
             "Physical factors",
             "Underlying medical conditions",
-            "Stress"
+            "Stress",
+            "Serum sickness due to blood transfusion and serum sickness-like reactions due to certain drugs cause acute urticaria leaving bruises, fever, swollen lymph glands, joint pain and swelling."
           ]
         }
+      ]
+    },
+    {
+      "title": "SEVERITY_ASSESSMENT",
+      "severity": [ {
+          "score": 0,
+          "wheals":"None",
+          "itch":"None"
+      },{
+          "score": 1,
+          "wheals":20,
+          "itch":"Mild"
+      },{
+          "score": 2,
+          "wheals":50,
+          "itch":"Moderate"
+      },{
+          "score": 3,
+          "wheals":51,
+          "itch":"Intense"
+      },
       ]
     },
     {
@@ -105,6 +149,37 @@
             "Stress management",
             "Wearing loose-fitting clothing"
           ]
+        },
+          "title": "DIAGNOSTIC",
+      "diagnostic": [
+        {
+          "type": "Summary",
+          "description": "Urticaria is diagnosed in people with a history of weals that last less than 24 hours with or without angioedema. A medication and family history should be elicited. A thorough physical examination should be undertaken."
+        },
+        {
+          "type": "Tests",
+          "description": "Skin prick tests and radioallergosorbent tests (RAST) or CAP fluoroimmunoassay may be requested if a drug, latex, or food allergy is suspected in acute urticaria.",
+          "note": "Typically not recommended for long-term use due to potential side effects."
+        },
+        {
+          "type": "Routine Test",
+          "description": "There are no routine diagnostic tests in chronic spontaneous urticaria apart from blood count and C-reactive protein (CBC, CRP), but investigations may be undertaken if an underlying disorder is suspected",
+        },
+        {
+          "type": "Tests",
+          "description": "The autologous serum skin test is sometimes carried out in chronic spontaneous urticaria, but its value is uncertain. It is positive if an injection of the patient's serum under the skin causes a red weal.",
+        },
+        {
+          "type": "Tests",
+          "description": "Inducible urticaria is often confirmed by inducing the reaction eg, scratching the skin in dermographism or applying an ice cube in suspected cold urticaria.",
+          
+        },
+         {
+          "type": "Tests",
+          "description": "Investigations for a systemic condition or autoinflammatory disease should be undertaken in urticaria patients with fever, joint or bone pain, and malaise. Patients with angioedema without weals should be asked if they take ACE inhibitor drugs and tested for complement C4; C1-INH levels, function and antibodies; and C1q.",
+        },{
+          "type": "Tests",
+          "description": "Biopsy of urticaria can be non-specific. The pathology shows oedema in the dermis and dilated blood vessels, with a variable mixed inflammatory infiltrate. Vessel-wall damage indicates urticarial vasculitis.",
         }
       ]
     }
