@@ -1,0 +1,55 @@
+text,label,speech
+"Patient presents with fatigue, arthralgia, and myalgia, suggestive of systemic lupus erythematosus (SLE).",0,1
+"Clinical examination reveals a malar rash on the patient's face, consistent with acute cutaneous lupus erythematosus.",0,1
+"Physical assessment demonstrates oral ulcers and alopecia in the patient, indicative of systemic lupus erythematosus.",0,1
+"Examination reveals Raynaud's phenomenon with pallor and cyanosis of the digits upon exposure to cold, suggestive of systemic lupus erythematosus.",0,1
+"Patient reports constitutional symptoms, including malaise and weight loss, in association with autoimmune manifestations, raising suspicion for systemic lupus erythematosus.",0,1
+"I've been feeling really tired lately, and my joints ache all the time.",0,0
+My skin is so sensitive to the sun. I get a rash every time I go outside.,0,0
+"I've got these sores in my mouth that won't heal, and my hair is falling out.",0,0
+My fingers turn white and numb when it's cold outside. It's so painful!,0,0
+"I've been feeling really sick lately, and my doctor thinks it might be lupus.",0,0
+My skin is so dry and itchy all the time. I can't stop scratching!,1,0
+"There are these red, inflamed patches on my arms and legs that won't go away.",1,0
+"I've got these itchy, oozing blisters on my hands and feet. It's driving me crazy!",1,0
+"My skin feels rough and leathery, and it keeps cracking and bleeding.",1,0
+"I've got eczema, and it's flaring up again. My skin is red, swollen, and painful.",1,0
+"Patient presents with pruritic, erythematous patches on the skin surface, consistent with acute exacerbation of atopic dermatitis.",1,1
+"Clinical examination reveals lichenified, erythematous plaques with excoriations on the extensor surfaces of the limbs, suggestive of atopic dermatitis.",1,1
+"Physical assessment demonstrates vesicular lesions with serous exudate on the palms and soles, characteristic of acute eczematous dermatitis.",1,1
+"Examination reveals dry, lichenified plaques with fissures and erosions on the skin, indicative of chronic atopic dermatitis.",1,1
+"Patient reports a history of atopic dermatitis with recurrent episodes of erythema, edema, and vesiculation, consistent with a flare of the disease.",1,1
+"I woke up with these big, red welts all over my body. They itch like crazy!",2,0
+"My skin feels like it's burning, and there are these raised bumps everywhere.",2,0
+"I ate something, and now my skin is covered in hives. It's so uncomfortable!",2,0
+"My arms and legs are covered in these itchy, red patches. I don't know what caused them.",2,0
+"I've been scratching all night because of these red, swollen bumps that won't go away.",2,0
+"Patient presents with erythematous, edematous wheals distributed diffusely on the body surface, consistent with acute urticaria.",2,1
+"Physical examination reveals raised, erythematous papules with central pallor, suggestive of urticarial lesions.",2,1
+"Clinical assessment demonstrates the presence of pruritic, well-demarcated erythematous wheals on the skin, indicative of acute urticaria.",2,1
+"Patient reports the sudden onset of pruritic, raised erythematous lesions on the extremities, consistent with acute urticaria.",2,1
+"Examination reveals widespread erythematous wheals with central clearing, characteristic of an urticarial eruption.",2,1
+"I've got these red, itchy patches all over my body. They're so annoying!",3,0
+"My skin is covered in these thick, silvery scales that keep flaking off.",3,0
+"I've got these red, scaly spots on my elbows and knees that won't go away.",3,0
+"My skin feels like it's on fire, and I keep scratching it until it bleeds.",3,0
+"I've tried everything, but nothing seems to get rid of these red patches on my skin.",3,0
+"Patient presents with erythematous, scaly plaques distributed symmetrically on the body surface, consistent with psoriasis vulgaris.",3,1
+"Examination reveals well-demarcated, erythematous plaques with silvery scales on the extensor surfaces of the elbows and knees, suggestive of plaque psoriasis.",3,1
+"Clinical assessment demonstrates the presence of erythematous, scaly lesions on the patient's elbows and knees, indicative of chronic plaque psoriasis.",3,1
+"Patient describes intense pruritus and erythema accompanied by scaling and excoriation, suggestive of a flare of psoriasis.",3,1
+"Physical examination reveals persistent erythematous plaques with overlying silvery scales on various body sites, consistent with the diagnosis of psoriasis.",3,1
+I noticed a weird mole on my arm. It's kind of irregular and keeps changing.,4,0
+There's this dark spot on my skin that's been getting bigger. It's not like a regular mole.,4,0
+"I've got this funny-looking mole on my back. It's not painful, but it just doesn't look right.",4,0
+There's a spot on my skin that's turned black. I'm worried it might be something serious.,4,0
+I've got this mole that's raised and has different colors. I'm afraid it might be cancerous.,4,0
+"Patient presents with an irregularly shaped pigmented lesion on the arm, exhibiting asymmetry, irregular borders, and variegated colors, concerning for melanoma.",4,1
+"Patient reports the presence of a rapidly enlarging pigmented lesion on the skin, demonstrating irregular borders and heterogeneous pigmentation, suggestive of melanoma.",4,1
+"Examination reveals a dysplastic nevus on the patient's back, characterized by irregular pigmentation and architectural disorder, raising suspicion for melanoma.",4,1
+"Patient describes the onset of a darkly pigmented lesion on the skin, which has increased in size over time, prompting concern for malignant melanoma.",4,1
+"Clinical evaluation identifies a raised, multicolored lesion with irregular borders and an asymmetric appearance, consistent with a possible diagnosis of melanoma.",4,1
+
+
+
+
