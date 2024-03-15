@@ -44,7 +44,7 @@ def batch_query_openai(df, model="gpt-3.5-turbo"):
                 completions.append({'Prompt': prompt, 'Completion': resp.message.content.strip().split('\n\n')})
 
     # Write completions to a CSV file
-    with open('completions.csv', 'w', newline='', encoding='utf-8') as csvfile:
+    with open('dataset_full.csv', 'w', newline='', encoding='utf-8') as csvfile:
         fieldnames = ['Question', 'Answer']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
