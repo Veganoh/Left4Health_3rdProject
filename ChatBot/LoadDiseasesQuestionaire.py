@@ -22,7 +22,7 @@ def query_openai(image_name):
     return response.choices[0].text.strip()
 
 
-batch_size = 20
+batch_size = 100
 
 # Function to batch query OpenAI API
 def batch_query_openai(df, model="gpt-3.5-turbo"):
@@ -40,6 +40,7 @@ def batch_query_openai(df, model="gpt-3.5-turbo"):
         for i in range(0, len(df), batch_size):
             # Extract a batch of rows
             batch_df = df.iloc[i:i + batch_size]
+            count = 0
             for index, row in batch_df.iterrows():
                 question = row[0]
                 answer = row[1]
@@ -54,7 +55,7 @@ def batch_query_openai(df, model="gpt-3.5-turbo"):
 
                 for resp in responses.choices:
                     completions.append({'Prompt': prompt, 'Completion': resp.message.content.strip().split('\n\n')})
-
+            break
     # Write completions to a CSV file
 
         for completion in completions:
@@ -73,7 +74,7 @@ def batch_query_openai(df, model="gpt-3.5-turbo"):
 
 
 # Main function to process folders and images
-def process_diseases(df, batch_size=1):
+def process_diseases(df):
     # Iterate through all lines in the DataFrame
     batch_query_openai(df)
     # Extract completions from the responses
@@ -84,17 +85,17 @@ def process_diseases(df, batch_size=1):
 # Main function
 def main():
     # Load the CSV file into a DataFrame
-    df = pd.read_csv('dataset.csv')
+    df = pd.read_csv('dataset.csv', quotechar='"', delimiter='|', quoting=csv.QUOTE_NONE,skipinitialspace=True)
     df_filtered = df[df['Processed'] != 1]
     number_records = len(df_filtered)
-    print(f'Processing {number_records} records')
+    print(f'Processing {batch_size} out of {number_records} records')
     results = process_diseases(df_filtered)
 
     # Add a new column 'processed' with value 1
-    df['Processed'] = 1
+    df.loc[:batch_size - 1, 'Processed'] = 1
 
     # Write the updated DataFrame back to the original CSV file
-    df.to_csv('dataset.csv', index=False)
+    # df.to_csv('dataset.csv', quotechar='"')
 
 
 if __name__ == "__main__":
