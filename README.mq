@@ -1,1 +1,6 @@
 Welcome to DermaChat Project!
+To run the chatbot:
+
+npm install -g @botonic/cli 
+cd myBot 
+botonic serve
