@@ -29,13 +29,18 @@ def preprocess_text(text):
 dataset['Question'] = dataset['Question'].apply(preprocess_text)
 dataset['Answer'] = dataset['Answer'].apply(preprocess_text)
 
-# Remove duplicates
-dataset.drop_duplicates(inplace=True)
 
 # Extract input texts, target texts, and intent labels
 input_texts = dataset['Question'].values
+empty_records_count_input = dataset['Question'].isna().sum()
 target_texts = dataset['Answer'].values
+empty_records_count_answers = dataset['Answer'].isna().sum()
 intent_labels = dataset['Disease'].values
+empty_records_count_labels = dataset['Disease'].isna().sum()
+
+print(empty_records_count_input)
+print(empty_records_count_answers)
+print(empty_records_count_labels)
 
 # Tokenize the input and target sequences
 input_characters = sorted(set(' '.join(input_texts)))
