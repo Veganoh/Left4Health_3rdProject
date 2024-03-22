@@ -6,7 +6,9 @@ import pickle
 
 # Load the saved variables
 with open('variables_preprocessed.pkl', 'rb') as f:
-    max_encoder_seq_length, max_decoder_seq_length, num_encoder_tokens, num_decoder_tokens, reverse_target_char_index = pickle.load(f)
+    max_encoder_seq_length, max_decoder_seq_length, num_encoder_tokens, num_decoder_tokens, target_token_index = pickle.load(f)
+
+reverse_target_char_index = {index: char for char, index in target_token_index.items()}
 
 # Load the saved tokenizer
 with open('tokenizer_preprocessed.pkl', 'rb') as f:
@@ -23,6 +25,11 @@ def preprocess_text(text):
     return text
 
 
+def find_key(dictionary, value):
+    keys = [key for key, val in dictionary.items() if val == value]
+    return keys
+
+
 # Define a function to generate responses
 def generate_response(input_text):
     input_text = preprocess_text(input_text)
@@ -32,11 +39,11 @@ def generate_response(input_text):
             input_sequence[0, t, input_token_index[char]] = 1.0
 
     decoder_input = np.zeros((1, max_decoder_seq_length, num_decoder_tokens), dtype='float32')
-    decoder_input[0, 0, target_token_index['\t']] = 1.0
 
     generated_response = ''
     for i in range(1, max_decoder_seq_length):
         decoder_output = model.predict([input_sequence, decoder_input])
+        print(i)
         sampled_token_index = np.argmax(decoder_output[0, i - 1, :])
         sampled_char = reverse_target_char_index[sampled_token_index]
         generated_response += sampled_char
@@ -48,7 +55,7 @@ def generate_response(input_text):
 
 
 # Example usage
-user_query = "What are the symptoms of eczema?"
+user_query = "What are some common treatments for Psoriasis?"
 response = generate_response(user_query)
 print("User Query:", user_query)
 print("Chatbot Response:", response)
