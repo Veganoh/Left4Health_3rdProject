@@ -22,7 +22,7 @@ def query_openai(image_name):
     return response.choices[0].text.strip()
 
 
-batch_size = 100
+batch_size = 150
 
 # Function to batch query OpenAI API
 def batch_query_openai(df, model="gpt-3.5-turbo"):
@@ -46,7 +46,8 @@ def batch_query_openai(df, model="gpt-3.5-turbo"):
                 answer = row[1]
                 disease = row[3]
                 prompt = f"Given the question '{question}' and answer '{answer}' about the disease '{disease}' can you generate more examples of questions and answers about the same topic?"
-                print(f'Processing prompt {prompt}')
+                print(f'Processing {count} prompt {prompt}')
+                count=count+1
                 prompts.append({'role': 'user','content': prompt})
                 responses = client.chat.completions.create(model=model, messages=prompts,
                                                             temperature=0)
@@ -68,6 +69,8 @@ def batch_query_openai(df, model="gpt-3.5-turbo"):
                         writer.writerow({'Question': question, 'Answer': answer, 'Disease': disease})
                         print(f'Processed response {pair}')
                 except ValueError:
+                    print(f'Error processing pair {pair}')
+                except IndexError:
                     print(f'Error processing pair {pair}')
 
     return True
