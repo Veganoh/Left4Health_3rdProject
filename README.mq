@@ -1,6 +1,6 @@
 Welcome to DermaChat Project!
-To run the chatbot:
+To run the chatbot backend:
+pip3 install keras
+pip3 install tensorflow
+python3 manage.py runserver
 
-npm install -g @botonic/cli 
-cd myBot 
-botonic serve
