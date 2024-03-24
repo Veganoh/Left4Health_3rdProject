@@ -18,8 +18,15 @@ from django.contrib import admin
 from django.urls import path
 from django.urls import include, path
 from .views import get_response
+from .views import train_model
+from .views import train_intent
+from .views import get_response_intent
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('chitchat/',get_response, name='generate_response')
+    path('chitchat/',get_response, name='generate_response'),
+    path('train/', train_model, name='train_model'),
+    path('train_intent/', train_intent, name='train_intent'),
+    path('intents/',get_response_intent, name='get_response_intent'),
+
 ]
