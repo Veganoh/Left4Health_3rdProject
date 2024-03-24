@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import pandas as pd
 import re
@@ -19,71 +21,75 @@ def preprocess_text(text):
     return text
 
 
-dataset['Question'] = dataset['Question'].apply(preprocess_text)
-dataset['Answer'] = dataset['Answer'].apply(preprocess_text)
+def train():
 
-# Remove duplicates
-dataset.drop_duplicates(inplace=True)
+    dataset['Question'] = dataset['Question'].apply(preprocess_text)
+    dataset['Answer'] = dataset['Answer'].apply(preprocess_text)
 
-# Extract input texts and target texts
-input_texts = dataset['Question'].values
-target_texts = dataset['Answer'].values
+    # Remove duplicates
+    dataset.drop_duplicates(inplace=True)
 
-# Tokenize the input and target sequences
-input_characters = sorted(set(' '.join(input_texts)))
-target_characters = sorted(set(' '.join(target_texts)))
+    # Extract input texts and target texts
+    input_texts = dataset['Question'].values
+    target_texts = dataset['Answer'].values
 
-input_token_index = {char: i for i, char in enumerate(input_characters)}
-target_token_index = {char: i for i, char in enumerate(target_characters)}
+    # Tokenize the input and target sequences
+    input_characters = sorted(set(' '.join(input_texts)))
+    target_characters = sorted(set(' '.join(target_texts)))
 
-num_encoder_tokens = len(input_characters)
-num_decoder_tokens = len(target_characters)
-max_encoder_seq_length = max([len(txt) for txt in input_texts])
-max_decoder_seq_length = max([len(txt) for txt in target_texts])
+    input_token_index = {char: i for i, char in enumerate(input_characters)}
+    target_token_index = {char: i for i, char in enumerate(target_characters)}
 
-# Prepare data for training
-encoder_input_data = np.zeros((len(input_texts), max_encoder_seq_length, num_encoder_tokens), dtype='float32')
-decoder_input_data = np.zeros((len(input_texts), max_decoder_seq_length, num_decoder_tokens), dtype='float32')
-decoder_target_data = np.zeros((len(input_texts), max_decoder_seq_length, num_decoder_tokens), dtype='float32')
+    num_encoder_tokens = len(input_characters)
+    num_decoder_tokens = len(target_characters)
+    max_encoder_seq_length = max([len(txt) for txt in input_texts])
+    max_decoder_seq_length = max([len(txt) for txt in target_texts])
 
-for i, (input_text, target_text) in enumerate(zip(input_texts, target_texts)):
-    for t, char in enumerate(input_text):
-        encoder_input_data[i, t, input_token_index[char]] = 1.0
-    for t, char in enumerate(target_text):
-        decoder_input_data[i, t, target_token_index[char]] = 1.0
-        if t > 0:
-            decoder_target_data[i, t - 1, target_token_index[char]] = 1.0
+    # Prepare data for training
+    encoder_input_data = np.zeros((len(input_texts), max_encoder_seq_length, num_encoder_tokens), dtype='float32')
+    decoder_input_data = np.zeros((len(input_texts), max_decoder_seq_length, num_decoder_tokens), dtype='float32')
+    decoder_target_data = np.zeros((len(input_texts), max_decoder_seq_length, num_decoder_tokens), dtype='float32')
 
-# Define the model
-latent_dim = 256
+    for i, (input_text, target_text) in enumerate(zip(input_texts, target_texts)):
+        for t, char in enumerate(input_text):
+            encoder_input_data[i, t, input_token_index[char]] = 1.0
+        for t, char in enumerate(target_text):
+            decoder_input_data[i, t, target_token_index[char]] = 1.0
+            if t > 0:
+                decoder_target_data[i, t - 1, target_token_index[char]] = 1.0
 
-encoder_inputs = Input(shape=(None, num_encoder_tokens))
-encoder = LSTM(latent_dim, return_state=True)
-encoder_outputs, state_h, state_c = encoder(encoder_inputs)
-encoder_states = [state_h, state_c]
+    # Define the model
+    latent_dim = 256
 
-decoder_inputs = Input(shape=(None, num_decoder_tokens))
-decoder_lstm = LSTM(latent_dim, return_sequences=True, return_state=True)
-decoder_outputs, _, _ = decoder_lstm(decoder_inputs, initial_state=encoder_states)
-decoder_dense = Dense(num_decoder_tokens, activation='softmax')
-decoder_outputs = decoder_dense(decoder_outputs)
+    encoder_inputs = Input(shape=(None, num_encoder_tokens))
+    encoder = LSTM(latent_dim, return_state=True)
+    encoder_outputs, state_h, state_c = encoder(encoder_inputs)
+    encoder_states = [state_h, state_c]
 
-model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
+    decoder_inputs = Input(shape=(None, num_decoder_tokens))
+    decoder_lstm = LSTM(latent_dim, return_sequences=True, return_state=True)
+    decoder_outputs, _, _ = decoder_lstm(decoder_inputs, initial_state=encoder_states)
+    decoder_dense = Dense(num_decoder_tokens, activation='softmax')
+    decoder_outputs = decoder_dense(decoder_outputs)
 
-# Compile and train the model
-model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-model.fit([encoder_input_data, decoder_input_data], decoder_target_data,
-          batch_size=1,
-          epochs=50,
-          validation_split=0.2)
+    model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
 
-# Save the model
-model.save('chatbot_model_preprocessed.h5')
+    # Compile and train the model
+    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    model.fit([encoder_input_data, decoder_input_data], decoder_target_data,
+              batch_size=1,
+              epochs=50,
+              validation_split=0.2)
 
-# Save the tokenizer
-with open('tokenizer_preprocessed.pkl', 'wb') as f:
-    pickle.dump((input_token_index, target_token_index), f)
+    # Save the model
+    model.save('chatbot_model_preprocessed.h5')
 
-# Save variables into a file
-with open('variables_preprocessed.pkl', 'wb') as f:
-    pickle.dump((max_encoder_seq_length, max_decoder_seq_length, num_encoder_tokens, num_decoder_tokens, target_token_index), f)
+    # Save the tokenizer
+    with open('tokenizer_preprocessed.pkl', 'wb') as f:
+        pickle.dump((input_token_index, target_token_index), f)
+
+    # Save variables into a file
+    with open('variables_preprocessed.pkl', 'wb') as f:
+        pickle.dump((max_encoder_seq_length, max_decoder_seq_length, num_encoder_tokens, num_decoder_tokens, target_token_index), f)
+
+    return True
