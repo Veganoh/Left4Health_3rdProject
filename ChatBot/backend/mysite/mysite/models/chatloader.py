@@ -24,7 +24,7 @@ with open(tokenizer_preprocessed, 'rb') as f:
     input_token_index, target_token_index = pickle.load(f)
 
 # Load the pre-trained chatbot model
-#model = load_model(chatbot_model_preprocessed)
+model = None
 
 
 # Define a function to preprocess the text data
@@ -41,6 +41,10 @@ def find_key(dictionary, value):
 
 # Define a function to generate responses
 def generate_response(input_text):
+    global model
+    if model is None:
+        model = load_model(chatbot_model_preprocessed)
+
     input_text = preprocess_text(input_text)
     input_sequence = np.zeros((1, max_encoder_seq_length, num_encoder_tokens), dtype='float32')
     for t, char in enumerate(input_text):
@@ -48,9 +52,19 @@ def generate_response(input_text):
             input_sequence[0, t, input_token_index[char]] = 1.0
 
     decoder_input = np.zeros((1, max_decoder_seq_length, num_decoder_tokens), dtype='float32')
-    model = None
-    generated_response = ''
 
+    generated_response = ''
+    for i in range(1, max_decoder_seq_length):
+        decoder_output = model.predict([input_sequence, decoder_input])
+        print(i)
+        sampled_token_index = np.argmax(decoder_output[0, i - 1, :])
+        sampled_char = reverse_target_char_index[sampled_token_index]
+        generated_response += sampled_char
+        if sampled_char == '\n':
+            break
+        decoder_input[0, i, sampled_token_index] = 1.0
+
+    return generated_response
 
 def generate_intent_svc(text):
     model = joblib.load('intent_classifier_model_svc.pkl')
@@ -69,8 +83,3 @@ def generate_intent_svc(text):
     return predicted_intent
 
 
-# Example usage
-user_query = "What are some common treatments for Psoriasis?"
-response = generate_response(user_query)
-print("User Query:", user_query)
-print("Chatbot Response:", response)
