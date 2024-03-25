@@ -24,7 +24,7 @@ with open(tokenizer_preprocessed, 'rb') as f:
     input_token_index, target_token_index = pickle.load(f)
 
 # Load the pre-trained chatbot model
-model = load_model(chatbot_model_preprocessed)
+model = None
 
 
 # Define a function to preprocess the text data
@@ -41,6 +41,10 @@ def find_key(dictionary, value):
 
 # Define a function to generate responses
 def generate_response(input_text):
+    global model
+    if model is None:
+        model = load_model(chatbot_model_preprocessed)
+
     input_text = preprocess_text(input_text)
     input_sequence = np.zeros((1, max_encoder_seq_length, num_encoder_tokens), dtype='float32')
     for t, char in enumerate(input_text):
@@ -79,8 +83,3 @@ def generate_intent_svc(text):
     return predicted_intent
 
 
-# Example usage
-user_query = "What are some common treatments for Psoriasis?"
-response = generate_response(user_query)
-print("User Query:", user_query)
-print("Chatbot Response:", response)
