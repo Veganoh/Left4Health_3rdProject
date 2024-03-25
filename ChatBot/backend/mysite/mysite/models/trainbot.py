@@ -78,7 +78,7 @@ def train():
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     model.fit([encoder_input_data, decoder_input_data], decoder_target_data,
               batch_size=1,
-              epochs=50,
+              epochs=25,
               validation_split=0.2)
 
     # Save the model
