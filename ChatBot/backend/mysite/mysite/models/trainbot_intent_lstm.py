@@ -52,7 +52,7 @@ def train_model_intent_lstm(request):
     model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
     # Train the model
-    model.fit(X_train, y_train, epochs=2, batch_size=32, validation_data=(X_test, y_test))
+    model.fit(X_train, y_train, epochs=50, batch_size=32, validation_data=(X_test, y_test))
 
     # Evaluate the model
     loss, accuracy = model.evaluate(X_test, y_test)
