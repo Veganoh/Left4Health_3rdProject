@@ -7,9 +7,15 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Embedding, Bidirectional, LSTM, Dense, Dropout
 import pickle
 
-# Load preprocessed data
-data = pd.read_csv('preprocessed_data.csv')
 
+
+# Get the current directory of the script
+current_dir = os.path.dirname(os.path.abspath(__file__))
+# Navigate two levels up
+two_levels_up = os.path.abspath(os.path.join(current_dir, '..', '..'))
+dataset_file_path = os.path.join(two_levels_up, 'dataset_full.csv')
+# Load the dataset
+data = pd.read_csv(dataset_file_path)
 # Split data into input (X) and target (y)
 X = data['Question']
 y = data['Disease']
