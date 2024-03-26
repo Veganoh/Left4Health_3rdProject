@@ -28,9 +28,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('chitchat/',get_response, name='generate_response'),
     path('train/', train_model, name='train_model'),
-    path('train_intent/', train_intent, name='train_intent'),
-    path('train_intent_lstm/', train_model_intent_lstm, name='train_model_intent_lstm'),
-    path('intents/',get_response_intent, name='get_response_intent'),
-    path('intents_lstm/', get_response_intent_lstm, name='get_response_intent_lstm'),
+    path('train_intent/<str:model_type>', train_intent, name='train_intent'),
+    path('intents/<str:model_type>', get_response_intent, name='get_response_intent')
 
 ]
