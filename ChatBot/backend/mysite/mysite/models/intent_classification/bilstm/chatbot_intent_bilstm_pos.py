@@ -53,28 +53,29 @@ def train_intent_bilstm_pos():
     X_train_padded, X_test_padded, y_train, y_test = train_test_split(X_padded, y_encoded, test_size=0.2, random_state=42)
     # Define BiLSTM model
     model = Sequential()
-    model.add(Embedding(input_dim=len(tokenizer.word_index) + 1, name='intent_classifier_bilstm_embedding', output_dim=128, input_shape=(max_sequence_length,)))
-    model.add(Bidirectional(LSTM(128, dropout=0.2, name='lstm')))
+    model.add(Embedding(input_dim=len(tokenizer.word_index) + 1, name='intent_classifier_bilstm_embedding', output_dim=128, input_length=max_sequence_length))
+    model.add(Bidirectional(LSTM(128, dropout=0.2, name='lstm'), name='bilstm'))
     model.add(Dense(len(label_encoder.classes_), activation='softmax', name='dense'))  # Number of classes
     # Compile model
     model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     # Train model
-    model.fit(X_train_padded, y_train, validation_data=(X_test_padded, y_test), epochs=10, batch_size=32, verbose=1)
+    model.fit(X_train_padded, y_train, validation_data=(X_test_padded, y_test), epochs=2, batch_size=32, verbose=1)
     # Save model and tokenizer
-    model.save('intent_classifier_bilstm.keras')
-    with open('tokenizer.pkl', 'wb') as f:
+    model.save('model/intent_classifier_bilstm.h5')
+    with open('model/tokenizer.pkl', 'wb') as f:
         pickle.dump(tokenizer, f)
     # Save the label encoder
-    with open('label_encoder.pkl', 'wb') as f:
+    with open('model/label_encoder.pkl', 'wb') as f:
         pickle.dump(label_encoder, f)
 
 
 def predict_intent_bilstm_pos(question):
     # Load the trained model
-    model = load_model('intent_classifier_bilstm.keras')
-
+    intent_classifier_bilstm = os.path.join(current_dir, 'model/intent_classifier_bilstm.h5')
+    model = load_model(intent_classifier_bilstm)
+    tokenizer_path = os.path.join(current_dir, 'model/tokenizer.pkl')
     # Load the tokenizer
-    with open('tokenizer.pkl', 'rb') as f:
+    with open(tokenizer_path, 'rb') as f:
         tokenizer = pickle.load(f)
 
     # Tokenize and convert to sequence
@@ -87,12 +88,28 @@ def predict_intent_bilstm_pos(question):
     # Perform the prediction
     prediction = model.predict(padded_sequence)
 
+    print(prediction)
+
+    # Get probabilities for all classes
+    probabilities = prediction[0]
+    # Convert probabilities to native Python floats
+    probabilities = probabilities.astype(float)
+
     # Load the label encoder
-    with open('label_encoder.pkl', 'rb') as f:
+    label_encoder_path = os.path.join(current_dir, 'model/label_encoder.pkl')
+    with open(label_encoder_path, 'rb') as f:
         label_encoder = pickle.load(f)
 
-    # Convert prediction to label
-    predicted_label = label_encoder.inverse_transform([np.argmax(prediction)])
+        # Decode each class index back to the original label
+    labels = label_encoder.inverse_transform(np.arange(len(probabilities)))
 
-    return predicted_label[0]  # Return the predicted label as a string
+    # Pair each label with its corresponding probability
+    label_probabilities = list(zip(labels, probabilities))
 
+    # Sort the pairs by probability in descending order
+    label_probabilities.sort(key=lambda x: x[1], reverse=True)
+
+    return label_probabilities
+
+if __name__ == "__main__":
+    train_intent_bilstm_pos()

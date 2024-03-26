@@ -1,11 +1,11 @@
 from django.http import JsonResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
-from .models.chatloader import generate_intent_svc, generate_response
-from .models.trainbot import train
-from .models.trainbot_intent_svc import train_model_intent
-from .models.trainbot_intent_lstm import train_model_intent_lstm
-from .models.chatloader_intent_lstm import predict_intent_lstm
+from .models.intent_classification.svc.chatloader import generate_intent_svc, generate_response
+from .models.conversation.models.lstm.trainbot import train
+from .models.intent_classification.svc.trainbot_intent_svc import train_model_intent
+from .models.intent_classification.lstm.trainbot_intent_lstm import train_model_intent_lstm
+from .models.intent_classification.lstm.chatloader_intent_lstm import predict_intent_lstm
 from .models.intent_classification.bilstm.chatbot_intent_bilstm_pos import train_intent_bilstm_pos
 from .models.intent_classification.bilstm.chatbot_intent_bilstm_pos import predict_intent_bilstm_pos
 

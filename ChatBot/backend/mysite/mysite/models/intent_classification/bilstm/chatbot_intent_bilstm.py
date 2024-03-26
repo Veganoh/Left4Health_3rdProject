@@ -48,9 +48,9 @@ loss, accuracy = model.evaluate(X_test, y_test)
 print(f'Test Loss: {loss}, Test Accuracy: {accuracy}')
 
 # Save model and necessary variables
-with open('tokenizer.pkl', 'wb') as f:
+with open('model/tokenizer.pkl', 'wb') as f:
     pickle.dump(tokenizer, f)
-with open('label_encoder.pkl', 'wb') as f:
+with open('model/label_encoder.pkl', 'wb') as f:
     pickle.dump(label_encoder, f)
 with open('max_sequence_length.pkl', 'wb') as f:
     pickle.dump(max_sequence_length, f)
