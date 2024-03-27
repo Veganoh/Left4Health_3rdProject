@@ -57,6 +57,11 @@ def chatbot_message_intent(request, model_type):
 
         disease_name = answer[0][0]
         prediction_value = answer[0][1]
+        # Check if the prediction value is less than 0.5
+        if prediction_value < 0.41:
+            # Return "Disease not detected" as the answer
+            return JsonResponse({"text": "Disease not detected"})
+
         # Create a formatted string with the disease name and prediction value
         formatted_text = f"{disease_name} ({prediction_value:.2f})"
         # Return the JSON response
