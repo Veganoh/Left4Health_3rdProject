@@ -39,6 +39,39 @@ def get_response(request) :
 
 
 @csrf_exempt
+def chatbot_message_intent(request, model_type):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        query = data['messages'][0]['text']
+        print(data)
+        answer = 'NA'
+        match model_type:
+            case 'bilstm_pos':
+                answer = predict_intent_bilstm_pos(query)
+            case 'svc':
+                answer = generate_intent_svc(query)
+            case 'lstm':
+                answer = predict_intent_lstm(query)
+            case 'bert':
+                answer = predict_intent_bert(query)
+
+        disease_name = answer[0][0]
+        prediction_value = answer[0][1]
+        # Check if the prediction value is less than 0.5
+        if prediction_value < 0.41:
+            # Return "Disease not detected" as the answer
+            return JsonResponse({"text": "Disease not detected"})
+
+        # Create a formatted string with the disease name and prediction value
+        formatted_text = f"{disease_name} ({prediction_value:.2f})"
+        # Return the JSON response
+        return JsonResponse({"text": formatted_text})
+    if request.method == 'OPTIONS':
+        response = HttpResponse()
+        response['allow'] = 'post'
+        return response
+
+@csrf_exempt
 def get_response_intent(request, model_type):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))

@@ -11,7 +11,7 @@
     src="https://unpkg.com/deep-chat@1.4.11/dist/deepChat.bundle.js"
   ></script>
   <body>
-    <h1>Deep Chat</h1>
+    <h1>DermaChat Bot</h1>
     <!-- Attributes can be set as strings either directly on the element (demo/textInput) or via a `setAttribute` method on its reference (introMessage).
       When passing JSON objects make sure that they are first correctly stringified (use the following tool https://jsonlint.com/), functions assigned
       to properties must not have external references and all regex values are properly escaped.
@@ -21,9 +21,8 @@
       id="chat-element"
       demo="false"
       request='{
-        "url": "http://localhost:8000/intents/bert",
-        "method": "POST",
-        "headers": {"customName": "customHeaderValue"}
+        "url": "http://localhost:8000/chatbot/intents/bilstm_pos",
+        "method": "POST"
          }'
     ></deep-chat>
   </body>
