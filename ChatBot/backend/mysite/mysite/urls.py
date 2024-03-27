@@ -22,6 +22,7 @@ from .views import train_model_intent_lstm
 from .views import train_model
 from .views import train_intent
 from .views import get_response_intent
+from .views import chatbot_message_intent
 from .views import get_response_intent_lstm
 
 urlpatterns = [
@@ -29,6 +30,7 @@ urlpatterns = [
     path('chitchat/',get_response, name='generate_response'),
     path('train/', train_model, name='train_model'),
     path('train_intent/<str:model_type>', train_intent, name='train_intent'),
-    path('intents/<str:model_type>', get_response_intent, name='get_response_intent')
+    path('intents/<str:model_type>', get_response_intent, name='get_response_intent'),
+    path('chatbot/intents/<str:model_type>', chatbot_message_intent, name='chatbot_intents')
 
 ]
