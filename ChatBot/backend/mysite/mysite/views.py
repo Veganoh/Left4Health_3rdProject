@@ -55,10 +55,11 @@ def chatbot_message_intent(request, model_type):
             case 'bert':
                 answer = predict_intent_bert(query)
 
+        print(answer)
         disease_name = answer[0][0]
         prediction_value = answer[0][1]
         # Check if the prediction value is less than 0.5
-        if prediction_value < 0.41:
+        if prediction_value < 0.5:
             # Return "Disease not detected" as the answer
             return JsonResponse({"text": "Disease not detected"})
 
