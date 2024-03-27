@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
 from .models.intent_classification.svc.chatloader import generate_intent_svc, generate_response
@@ -8,7 +8,7 @@ from .models.intent_classification.lstm.trainbot_intent_lstm import train_model_
 from .models.intent_classification.lstm.chatloader_intent_lstm import predict_intent_lstm
 from .models.intent_classification.bilstm.chatbot_intent_bilstm_pos import train_intent_bilstm_pos
 from .models.intent_classification.bilstm.chatbot_intent_bilstm_pos import predict_intent_bilstm_pos
-
+from .models.intent_classification.bert.chatbot_intent_bart import predict_intent_bert
 
 @csrf_exempt
 def train_model(request):
@@ -37,25 +37,31 @@ def get_response(request) :
 
     return JsonResponse({"status": "error"})
 
+
 @csrf_exempt
 def get_response_intent(request, model_type):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
+        query = data['messages'][0]['text']
         print(data)
         answer = 'NA'
         match model_type:
             case 'bilstm_pos':
-                answer = predict_intent_bilstm_pos(data['query'])
+                answer = predict_intent_bilstm_pos(query)
             case 'svc':
-                answer = generate_intent_svc(data['query'])
+                answer = generate_intent_svc(query)
             case 'lstm':
-                answer = predict_intent_lstm(data['query'])
+                answer = predict_intent_lstm(query)
+            case 'bert':
+                answer = predict_intent_bert(query)
 
         # Return the JSON response
         return JsonResponse({"status": "success",
                              "data": answer})
-
-    return JsonResponse({"status": "error"})
+    if request.method == 'OPTIONS':
+        response = HttpResponse()
+        response['allow'] = 'post'
+        return response
 
 @csrf_exempt
 def get_response_intent_lstm(request) :

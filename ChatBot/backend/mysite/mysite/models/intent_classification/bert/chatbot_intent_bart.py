@@ -25,71 +25,63 @@ label_encoder = LabelEncoder()
 labels = label_encoder.fit_transform(diseases)
 # Initialize the tokenizer
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+
+
+# Create a TensorFlow dataset
+def create_tf_dataset(input_ids, attention_masks, labels, batch_size=32):
+    dataset = tf.data.Dataset.from_tensor_slices(({
+                                                      'input_ids': input_ids,
+                                                      'attention_mask': attention_masks
+                                                  }, labels))
+    dataset = dataset.shuffle(len(input_ids)).batch(batch_size)
+    return dataset
+
+
 # Tokenize and encode sentences in BERT's format
+def encode_sentences(sentences, max_length=128):
+    # Tokenize all of the sentences and map the tokens to their word IDs.
+    input_ids = []
+    attention_masks = []
+    for sentence in sentences:
+        encoded_dict = tokenizer.encode_plus(
+            sentence,  # Sentence to encode.
+            add_special_tokens=True,  # Add '[CLS]' and '[SEP]'
+            max_length=max_length,  # Pad & truncate all sentences.
+            pad_to_max_length=True,
+            return_attention_mask=True,  # Construct attention masks.
+            return_tensors='tf',  # Return tensorflow tensors.
+        )
 
+        # Add the encoded sentence to the list.
+        input_ids.append(encoded_dict['input_ids'])
 
-def encode_sentences(sentences):
-    global features, labels
-    input_examples = [InputExample(guid=index, text_a=sentence, text_b=None, label=label) for index, (sentence, label) in enumerate(zip(sentences, labels))]
-    features = glue_convert_examples_to_features(examples=input_examples, tokenizer=tokenizer, max_length=128, task='mnli', label_list=label_encoder.classes_)
-    return features
+        # And its attention mask (differentiates padding from non-padding).
+        attention_masks.append(encoded_dict['attention_mask'])
 
-
-features = encode_sentences(combined_texts)
-
-
-# Convert to TensorFlow datasets
-def convert_to_tf_dataset(feats, bs):
-    # Convert our list of features into a TensorFlow dataset
-    def gen():
-        for ex in feats:
-            yield (
-                {
-                   "input_ids": ex.input_ids,
-                   "attention_mask": ex.attention_mask,
-                   "token_type_ids": ex.token_type_ids,
-                },
-                ex.label
-            )
-    dataset = tf.data.Dataset.from_generator(
-       gen,
-       ({"input_ids": tf.int32, "attention_mask": tf.int32, "token_type_ids": tf.int32}, tf.int64),
-       (
-           {
-               "input_ids": tf.TensorShape([None]),
-               "attention_mask": tf.TensorShape([None]),
-               "token_type_ids": tf.TensorShape([None]),
-           },
-           tf.TensorShape([]),
-       ),
-    )
-    return dataset.shuffle(100).batch(bs)
+    # Convert the lists into tensors.
+    input_ids = tf.concat(input_ids, 0)
+    attention_masks = tf.concat(attention_masks, 0)
+    return input_ids, attention_masks
 
 
 def train_intent_bart():
-    # Create TensorFlow datasets for training and validation
-    batch_size = 32
-    tf_dataset = convert_to_tf_dataset(features, batch_size)
-    train_size = int(0.9 * len(tf_dataset))
-    val_size = len(tf_dataset) - train_size
-    train_dataset = tf_dataset.take(train_size)
-    val_dataset = tf_dataset.skip(train_size)
+    global labels
+    input_ids, attention_masks = encode_sentences(combined_texts)
+    # Convert labels to tensorflow tensors
+    labels = tf.convert_to_tensor(labels)
 
+    # Create the dataset
+    dataset = create_tf_dataset(input_ids, attention_masks, labels)
     # Load the BERT model
     model = TFBertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=len(label_encoder.classes_))
-
-    # Fine-tune BERT on your dataset
+    # Prepare the model for training
     optimizer = tf.keras.optimizers.Adam(learning_rate=5e-5)
+
     loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
     model.compile(optimizer=optimizer, loss=loss, metrics=['accuracy'])
 
     # Train the model
-    model.fit(train_dataset, validation_data=val_dataset, epochs=3)
-
-    # After fine-tuning, you can evaluate the model's performance on the validation set
-    val_loss, val_accuracy = model.evaluate(val_dataset)
-    print(f'Validation loss: {val_loss}, validation accuracy: {val_accuracy}')
-
+    model.fit(dataset, epochs=3)
     # Save the fine-tuned model and the label encoder for later use
     label_encoder_path = os.path.join(current_dir, 'model/label_encoder.pkl')
     my_fine_tuned_bert = os.path.join(current_dir, 'model/my_fine_tuned_bert')
@@ -99,7 +91,7 @@ def train_intent_bart():
         pickle.dump(label_encoder, le_file)
 
 
-def predict_intent(text_query):
+def predict_intent_bert(text_query):
     # Load the fine-tuned BERT model
     # Load the trained model
     my_fine_tuned_bert = os.path.join(current_dir, 'model/my_fine_tuned_bert')
