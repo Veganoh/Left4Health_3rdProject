@@ -5,6 +5,8 @@ from transformers import InputExample
 import tensorflow as tf
 import os
 import pickle
+import nltk
+
 
 # Get the current directory of the script
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -81,7 +83,7 @@ def train_intent_bart():
     model.compile(optimizer=optimizer, loss=loss, metrics=['accuracy'])
 
     # Train the model
-    model.fit(dataset, epochs=3)
+    model.fit(dataset, epochs=4)
     # Save the fine-tuned model and the label encoder for later use
     label_encoder_path = os.path.join(current_dir, 'model/label_encoder.pkl')
     my_fine_tuned_bert = os.path.join(current_dir, 'model/my_fine_tuned_bert')

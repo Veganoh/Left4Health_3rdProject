@@ -1,3 +1,4 @@
+import nltk
 from django.http import JsonResponse, HttpResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
@@ -8,7 +9,11 @@ from .models.intent_classification.lstm.trainbot_intent_lstm import train_model_
 from .models.intent_classification.lstm.chatloader_intent_lstm import predict_intent_lstm
 from .models.intent_classification.bilstm.chatbot_intent_bilstm_pos import train_intent_bilstm_pos
 from .models.intent_classification.bilstm.chatbot_intent_bilstm_pos import predict_intent_bilstm_pos
-from .models.intent_classification.bert.chatbot_intent_bart import predict_intent_bert
+from .models.intent_classification.bert.chatbot_intent_bert import predict_intent_bert
+from nltk.corpus import words
+from nltk.tokenize import word_tokenize
+
+nltk.download('words')
 
 @csrf_exempt
 def train_model(request):
@@ -43,6 +48,8 @@ def chatbot_message_intent(request, model_type):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
         query = data['messages'][0]['text']
+        if not is_mostly_english(query):
+            return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
         print(data)
         answer = 'NA'
         match model_type:
@@ -61,7 +68,10 @@ def chatbot_message_intent(request, model_type):
         # Check if the prediction value is less than 0.5
         if prediction_value < 0.5:
             # Return "Disease not detected" as the answer
-            return JsonResponse({"text": "Disease not detected"})
+            return JsonResponse({"role": "ai", "text": "Disease not detected"})
+        if disease_name == 'OOS':
+            # Return "Disease not detected" as the answer
+            return JsonResponse({"role": "ai", "text": "I am sorry but I am trained to answer about skin diseases only"})
 
         # Create a formatted string with the disease name and prediction value
         formatted_text = f"{disease_name} ({prediction_value:.2f})"
@@ -108,3 +118,20 @@ def get_response_intent_lstm(request) :
                              "data": answer})
 
     return JsonResponse({"status": "error"})
+
+
+# Set of English words
+english_vocab = set(w.lower() for w in words.words())
+
+
+def is_mostly_english(sentence, threshold=0.8):
+    # Tokenize the sentence into words
+    tokens = word_tokenize(sentence)
+    # Count the number of English words
+    english_words_count = sum(1 for word in tokens if word.lower() in english_vocab)
+
+    # Calculate the percentage of English words
+    english_percentage = english_words_count / len(tokens)
+
+    # Check if the percentage of English words is above the threshold
+    return english_percentage >= threshold
