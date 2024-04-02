@@ -25,6 +25,26 @@
         "method": "POST"
          }'
     ></deep-chat>
+<script>
+  // Get the URL parameter value
+  const urlParams = new URLSearchParams(window.location.search);
+  const disease = urlParams.get('disease');
+
+  // Check if disease parameter is present
+  if (disease) {
+    // Modify the request object to include additionalBodyProps with disease_intent
+    const chatElement = document.getElementById('chat-element');
+    const request = JSON.parse(chatElement.getAttribute('request'));
+
+    // Add additionalBodyProps object if it doesn't exist
+    request.additionalBodyProps = request.additionalBodyProps || {};
+
+    // Add disease_intent to additionalBodyProps
+    request.additionalBodyProps.disease_intent = disease;
+
+    chatElement.setAttribute('request', JSON.stringify(request));
+  }
+</script>
   </body>
   <!-- !!Either set the script as "module" or place your code in a timeout in order to wait for the component to load -->
   <script type="module">

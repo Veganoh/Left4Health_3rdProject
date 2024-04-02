@@ -11,11 +11,14 @@ from .models.intent_classification.bilstm.chatbot_intent_bilstm_pos import train
 from .models.intent_classification.bilstm.chatbot_intent_bilstm_pos import predict_intent_bilstm_pos
 from .models.intent_classification.bert.chatbot_intent_bert import predict_intent_bert
 from .models.intent_classification.bert.chatbot_intent_bert_intents import predict_intent_bert_intents
-from .models.conversation.models.llm.chatgpt import generate_answer
+from .models.conversation.models.llm.chatgpt import generate_answer_with_intent
+from .models.conversation.models.llm.chatgpt import generate_answer_without_intent
 from nltk.corpus import words
 from nltk.tokenize import word_tokenize
 
 nltk.download('words')
+
+valid_diseases = ['melanoma', 'dermatitis', 'psoriasis', 'urticaria', 'lupus']
 
 @csrf_exempt
 def train_model(request):
@@ -51,23 +54,44 @@ def chatbot_message_intent(request, model_type):
         data = json.loads(request.body.decode('utf-8'))
         print(data)
         query = data['messages'][0]['text']
-        if not is_mostly_english(query):
-            return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
+        disease_intent = ''
+        process_disease = False
+        if 'disease_intent' in data:
+            # Convert disease_intent to lowercase for case-insensitive comparison
+            disease_intent = data['disease_intent'].lower()
+
+            # Check if disease_intent matches any valid diseases
+            if disease_intent in valid_diseases:
+                process_disease = True
+
         print(data)
         answer = 'NA'
         match model_type:
             case 'bilstm_pos':
+                if not is_mostly_english(query):
+                    return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
                 answer = predict_intent_bilstm_pos(query)
             case 'svc':
+                if not is_mostly_english(query):
+                    return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
                 answer = generate_intent_svc(query)
             case 'lstm':
+                if not is_mostly_english(query):
+                    return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
                 answer = predict_intent_lstm(query)
             case 'bert':
+                if not is_mostly_english(query):
+                    return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
                 answer = predict_intent_bert(query)
             case 'multitaskbert':
+                if not is_mostly_english(query):
+                    return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
                 answer = predict_intent_bert_intents(query)
             case 'gpt':
-                formatted_answer = generate_answer(data['messages'])
+                if process_disease:
+                    formatted_answer = generate_answer_with_intent(data['messages'], disease_intent)
+                else:
+                    formatted_answer = generate_answer_without_intent(data['messages'])
                 return JsonResponse(formatted_answer, safe=False)
         print(answer)
         disease_name = answer[0][0]
@@ -133,7 +157,7 @@ def get_response_intent_lstm(request) :
 english_vocab = set(w.lower() for w in words.words())
 
 
-def is_mostly_english(sentence, threshold=0.8):
+def is_mostly_english(sentence, threshold=0.6):
     # Tokenize the sentence into words
     tokens = word_tokenize(sentence)
     # Count the number of English words
