@@ -13,6 +13,7 @@ from .models.intent_classification.bert.chatbot_intent_bert import predict_inten
 from .models.intent_classification.bert.chatbot_intent_bert_intents import predict_intent_bert_intents
 from .models.conversation.models.llm.chatgpt import generate_answer_with_intent
 from .models.conversation.models.llm.chatgpt import generate_answer_without_intent
+from .models.conversation.models.roberta.HaystackQuestionAnserting import generate_response_haystack
 from nltk.corpus import words
 from nltk.tokenize import word_tokenize
 
@@ -87,6 +88,15 @@ def chatbot_message_intent(request, model_type):
                 if not is_mostly_english(query):
                     return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
                 answer = predict_intent_bert_intents(query)
+            case 'haystack':
+                if not is_mostly_english(query):
+                    return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
+                answer = generate_response_haystack(query)
+                print(answer)
+                if answer.score < 0.6:
+                    # Return "Disease not detected" as the answer
+                    return JsonResponse({"role": "ai", "text": "Disease not detected"})
+                return JsonResponse({"role": "ai", "text": answer.content.split('[SEP]')[1]})
             case 'gpt':
                 if process_disease:
                     formatted_answer = generate_answer_with_intent(data['messages'], disease_intent)
