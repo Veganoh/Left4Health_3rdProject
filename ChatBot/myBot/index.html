@@ -21,7 +21,7 @@
       id="chat-element"
       demo="false"
       request='{
-        "url": "http://localhost:8000/chatbot/intents/bert",
+        "url": "http://localhost:8000/chatbot/intents/gpt",
         "method": "POST"
          }'
     ></deep-chat>
@@ -32,7 +32,7 @@
     // Setting value via a property (easiest way)
     elementRef.initialMessages = [
       { role: "user", text: "Hey, how are you today?" },
-      { role: "ai", text: "I am doing very well!" },
+      { role: "system", text: "I am doing very well!" },
     ];
     elementRef.setAttribute(
       "introMessage",

@@ -1,18 +1,19 @@
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
-from transformers import BertTokenizer, TFBertForSequenceClassification, glue_convert_examples_to_features
+from transformers import BertTokenizer, TFBertForSequenceClassification, glue_convert_examples_to_features, TFBertModel
 from transformers import InputExample
 import tensorflow as tf
 import os
 import pickle
 import nltk
+from tensorflow.keras.layers import Dense
 
 
 # Get the current directory of the script
 current_dir = os.path.dirname(os.path.abspath(__file__))
 # Navigate two levels up
 two_levels_up = os.path.abspath(os.path.join(current_dir, '..', '..'))
-dataset_file_path = os.path.join(two_levels_up, 'dataset_full.csv')
+dataset_file_path = os.path.join(two_levels_up, 'dataset_with_intents.csv')
 # Load the dataset
 df = pd.read_csv(dataset_file_path)
 # Preprocess the dataset
@@ -23,8 +24,7 @@ diseases = df['Disease'].tolist()
 # Combine questions and answers into a single text input
 combined_texts = [question + " [SEP] " + answer for question, answer in zip(questions, answers)]
 # Encode the labels
-label_encoder = LabelEncoder()
-labels = label_encoder.fit_transform(diseases)
+
 # Initialize the tokenizer
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
@@ -81,6 +81,7 @@ def create_tf_dataset(input_ids, attention_masks, disease_labels, intent_labels,
 
 def train_intent_and_disease_model():
     input_ids, attention_masks = encode_sentences(combined_texts)
+    global disease_labels, intent_labels
 
     # Convert labels to tensorflow tensors
     disease_labels = tf.convert_to_tensor(disease_labels)
@@ -90,9 +91,7 @@ def train_intent_and_disease_model():
     dataset = create_tf_dataset(input_ids, attention_masks, disease_labels, intent_labels)
 
     # Load the BERT model
-    model = MultiTaskBert.from_pretrained('bert-base-uncased',
-                                                   num_disease_labels=len(disease_label_encoder.classes_),
-                                                   num_intent_labels=len(intent_label_encoder.classes_))
+    model = MultiTaskBert(len(disease_label_encoder.classes_),len(intent_label_encoder.classes_))
 
     # Prepare the model for training
     optimizer = tf.keras.optimizers.Adam(learning_rate=5e-5)
@@ -101,51 +100,45 @@ def train_intent_and_disease_model():
     model.compile(optimizer=optimizer, loss=loss, metrics=['accuracy'])
 
     # Train the model
-    model.fit(dataset, epochs=4)
+    model.fit(dataset, epochs=2)
 
     # Save the fine-tuned model and the label encoders for later use
-    model.save_pretrained('my_fine_tuned_bert')
-    with open('disease_label_encoder.pkl', 'wb') as le_file:
+    model.save('model/my_fine_tuned_bert_intents')
+    with open('model/disease_label_encoder_intents.pkl', 'wb') as le_file:
         pickle.dump(disease_label_encoder, le_file)
-    with open('intent_label_encoder.pkl', 'wb') as le_file:
+    with open('model/intent_label_encoder_intents.pkl', 'wb') as le_file:
         pickle.dump(intent_label_encoder, le_file)
 
 
-def predict_intent_bert(text_query):
+my_fine_tuned_bert = os.path.join(current_dir, 'model/my_fine_tuned_bert_intents')
+# Load the fine-tuned model
+model = tf.keras.models.load_model(my_fine_tuned_bert)
+
+
+def predict_intent_bert_intents(input_sentence):
     # Load the fine-tuned BERT model
     # Load the trained model
-    my_fine_tuned_bert = os.path.join(current_dir, 'model/my_fine_tuned_bert')
-    model = TFBertForSequenceClassification.from_pretrained(my_fine_tuned_bert)
-
-    # Preprocess the text query
-    encoded_dict = tokenizer.encode_plus(
-        text_query,  # Input text
-        add_special_tokens=True,  # Add '[CLS]' and '[SEP]'
-        max_length=64,  # Pad & truncate all sentences.
-        pad_to_max_length=True,
-        return_attention_mask=True,  # Construct attention masks.
-        return_tensors='tf',  # Return TensorFlow tensors.
-    )
-
-    # Extract input IDs and attention masks from the encoded representation
-    input_ids = encoded_dict['input_ids']
-    attention_mask = encoded_dict['attention_mask']
-
+    # Encode the input sentence
+    input_ids, attention_mask = encode_sentences([input_sentence])
+    global disease_labels
     # Make a prediction
-    predictions = model(input_ids, attention_mask=attention_mask)
+    predictions = model.predict({'input_ids': input_ids, 'attention_mask': attention_mask})
 
     # Convert logits to probabilities
-    probabilities = tf.nn.softmax(predictions.logits, axis=-1).numpy()[0]
+    disease_probabilities = tf.nn.softmax(predictions['disease_output'], axis=-1).numpy()[0]
 
-    probabilities = probabilities.astype(float)
+    # Get disease labels and intent label
+    disease_labels = disease_label_encoder.classes_
+    intent_label = intent_label_encoder.inverse_transform([tf.argmax(predictions['intent_output'], axis=1).numpy()[0]])[
+        0]
 
-    # Pair each label with its corresponding probability
-    label_probabilities = list(zip(label_encoder.classes_, probabilities))
+    # Pair each disease label with its corresponding probability
+    label_probabilities = list(zip(disease_labels, disease_probabilities))
 
     # Sort the pairs by probability in descending order
     label_probabilities.sort(key=lambda x: x[1], reverse=True)
 
-    return label_probabilities
+    return {'label_probabilities': label_probabilities, 'intent':intent_label}
 
 
 class MultiTaskBert(tf.keras.Model):
