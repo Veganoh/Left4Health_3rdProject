@@ -2,5 +2,6 @@ Welcome to DermaChat Project!
 To run the chatbot backend:
 pip3 install keras
 pip3 install tensorflow
+cd ChatBot/backend/mysite
 python3 manage.py runserver
 
