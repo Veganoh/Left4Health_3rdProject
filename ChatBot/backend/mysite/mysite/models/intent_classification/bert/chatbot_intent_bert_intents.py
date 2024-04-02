@@ -13,7 +13,7 @@ from tensorflow.keras.layers import Dense
 current_dir = os.path.dirname(os.path.abspath(__file__))
 # Navigate two levels up
 two_levels_up = os.path.abspath(os.path.join(current_dir, '..', '..'))
-dataset_file_path = os.path.join(two_levels_up, 'dataset_full.csv')
+dataset_file_path = os.path.join(two_levels_up, 'dataset_with_intents.csv')
 # Load the dataset
 df = pd.read_csv(dataset_file_path)
 # Preprocess the dataset
@@ -91,9 +91,7 @@ def train_intent_and_disease_model():
     dataset = create_tf_dataset(input_ids, attention_masks, disease_labels, intent_labels)
 
     # Load the BERT model
-    model = MultiTaskBert.from_pretrained('bert-base-uncased',
-                                                   num_disease_labels=len(disease_label_encoder.classes_),
-                                                   num_intent_labels=len(intent_label_encoder.classes_))
+    model = MultiTaskBert(len(disease_label_encoder.classes_),len(intent_label_encoder.classes_))
 
     # Prepare the model for training
     optimizer = tf.keras.optimizers.Adam(learning_rate=5e-5)
@@ -102,28 +100,29 @@ def train_intent_and_disease_model():
     model.compile(optimizer=optimizer, loss=loss, metrics=['accuracy'])
 
     # Train the model
-    model.fit(dataset, epochs=4)
+    model.fit(dataset, epochs=2)
 
     # Save the fine-tuned model and the label encoders for later use
-    model.save_pretrained('my_fine_tuned_bert')
-    with open('disease_label_encoder.pkl', 'wb') as le_file:
+    model.save('model/my_fine_tuned_bert_intents')
+    with open('model/disease_label_encoder_intents.pkl', 'wb') as le_file:
         pickle.dump(disease_label_encoder, le_file)
-    with open('intent_label_encoder.pkl', 'wb') as le_file:
+    with open('model/intent_label_encoder_intents.pkl', 'wb') as le_file:
         pickle.dump(intent_label_encoder, le_file)
 
 
+my_fine_tuned_bert = os.path.join(current_dir, 'model/my_fine_tuned_bert_intents')
 # Load the fine-tuned model
-model = tf.keras.models.load_model('my_fine_tuned_bert')
+model = tf.keras.models.load_model(my_fine_tuned_bert)
 
 
-def predict_intent_bert(input_sentence):
+def predict_intent_bert_intents(input_sentence):
     # Load the fine-tuned BERT model
     # Load the trained model
     # Encode the input sentence
-    encoded_input = encode_sentences([input_sentence])
+    input_ids, attention_mask = encode_sentences([input_sentence])
     global disease_labels
     # Make a prediction
-    predictions = model(encoded_input['input_ids'], attention_mask=encoded_input['attention_mask'])
+    predictions = model.predict({'input_ids': input_ids, 'attention_mask': attention_mask})
 
     # Convert logits to probabilities
     disease_probabilities = tf.nn.softmax(predictions['disease_output'], axis=-1).numpy()[0]

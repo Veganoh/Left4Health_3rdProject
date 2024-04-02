@@ -10,6 +10,8 @@ from .models.intent_classification.lstm.chatloader_intent_lstm import predict_in
 from .models.intent_classification.bilstm.chatbot_intent_bilstm_pos import train_intent_bilstm_pos
 from .models.intent_classification.bilstm.chatbot_intent_bilstm_pos import predict_intent_bilstm_pos
 from .models.intent_classification.bert.chatbot_intent_bert import predict_intent_bert
+from .models.intent_classification.bert.chatbot_intent_bert_intents import predict_intent_bert_intents
+from .models.conversation.models.llm.chatgpt import generate_answer
 from nltk.corpus import words
 from nltk.tokenize import word_tokenize
 
@@ -47,6 +49,7 @@ def get_response(request) :
 def chatbot_message_intent(request, model_type):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
+        print(data)
         query = data['messages'][0]['text']
         if not is_mostly_english(query):
             return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
@@ -61,7 +64,11 @@ def chatbot_message_intent(request, model_type):
                 answer = predict_intent_lstm(query)
             case 'bert':
                 answer = predict_intent_bert(query)
-
+            case 'multitaskbert':
+                answer = predict_intent_bert_intents(query)
+            case 'gpt':
+                formatted_answer = generate_answer(data['messages'])
+                return JsonResponse(formatted_answer, safe=False)
         print(answer)
         disease_name = answer[0][0]
         prediction_value = answer[0][1]
@@ -97,6 +104,8 @@ def get_response_intent(request, model_type):
             case 'lstm':
                 answer = predict_intent_lstm(query)
             case 'bert':
+                answer = predict_intent_bert(query)
+            case 'multitaskbert':
                 answer = predict_intent_bert(query)
 
         # Return the JSON response
