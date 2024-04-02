@@ -8,6 +8,7 @@ dist/
 tmp/
 app/**/*.js
 app/**/*.js.map
+ClassificationOfSkinDiseases/DataProcessed
 
 # dependencies
 node_modules/
