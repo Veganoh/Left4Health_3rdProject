@@ -13,6 +13,8 @@ def replace_attribute(json_array, old_attribute, new_attribute):
 
 
 def generate_answer_with_intent(messages, disease_intent):
+    # the system role forces the intent that the llm will always respect
+    # if a disease is calculated from the model it can be paaased by parameter otherwise without intent is used
     messages.insert(0,{
         "role": "system",
         "content": f"You will be helping a patient with skin disease queries. Patient is trying to find out about "
@@ -23,7 +25,7 @@ def generate_answer_with_intent(messages, disease_intent):
 
 
 def generate_answer_without_intent(messages):
-    # this grounds the chat gpt into skin disease recognition of the agreed diseases
+    # this grounds the chat gpt into skin disease recognition of the agreed diseases ONLY
     messages.insert(0,{
         "role": "system",
         "content": "You will be helping a patient with skin disease queries. Patient is trying to find out about a "
