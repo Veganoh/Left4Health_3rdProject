@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <header>
+        <img class="banner" src="assets/derma-diagnosis/banner.svg" alt="banner">
+    </header>
+    <main>
+        <div class="threeholder">
+            
+            <div class="inputInfo  d-flex flex-column">
+
+                <div class="inputInfoUp">
+                    <input type="file" accept="image/*" [disabled]="inputType == 'Text'"><br><br>
+                    <textarea  id="text" name="text" rows="4" cols="50" [disabled]="inputType == 'Image'" [(ngModel)]="text"></textarea><br><br>
+
+
+                    <div class="d-flex justify-content-around ">
+                        <button (click)="changeInputType()">{{ inputType }}</button>
+                        <button type="submit">Diagnose</button>    
+                    </div>
+                </div>
+
+
+                <div class="inputInfoDown">
+                    Ainda tenho de pensar como vou fazer isto
+                </div>
+            </div>
+
+
+
+            <div class="threetwo">
+                <deep-chat demo="true"
+                avatars='{
+                    "ai": {
+                        "src": "assets/derma-diagnosis/favicon.png"
+                    }
+                }'
+
+                [initialMessages]="initialMessages"
+                ></deep-chat>
+
+            </div>
+        </div>
+    </main>
+</body>
+</html>
