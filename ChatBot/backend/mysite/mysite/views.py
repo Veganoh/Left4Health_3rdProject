@@ -104,6 +104,9 @@ def chatbot_message_intent(request, model_type):
                 if answer.score < 0.6:
                     # Return "Disease not detected" as the answer
                     return JsonResponse({"role": "ai", "text": "Disease not detected"})
+                if 'OOS' in answer.meta['abstract']:
+                    return JsonResponse({"role": "ai", "text": "I am sorry but I am trained to answer about skin diseases only"})
+
                 return JsonResponse({"role": "ai", "text": answer.content.split('[SEP]')[1]})
             case 'gpt':
                 if process_disease:
