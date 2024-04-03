@@ -51,6 +51,12 @@ def get_response(request) :
 
 @csrf_exempt
 def chatbot_message_intent(request, model_type):
+    # this rest api service is called from chatbot
+    # depending on parameter one of the models will be used
+    # after many tests at the moment llm is the most prolific followd by haystack
+    # haystack hybrid retrieval colab can be found
+    # at https://colab.research.google.com/github/deepset-ai/haystack-tutorials/blob/main/tutorials/33_Hybrid_Retrieval.ipynb
+
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
         print(data)
@@ -69,6 +75,7 @@ def chatbot_message_intent(request, model_type):
         answer = 'NA'
         match model_type:
             case 'bilstm_pos':
+                # is_mostly_english does quick scan
                 if not is_mostly_english(query):
                     return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
                 answer = predict_intent_bilstm_pos(query)
@@ -93,6 +100,7 @@ def chatbot_message_intent(request, model_type):
                     return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
                 answer = generate_response_haystack(query)
                 print(answer)
+                # in case score is bad we think it is not correct
                 if answer.score < 0.6:
                     # Return "Disease not detected" as the answer
                     return JsonResponse({"role": "ai", "text": "Disease not detected"})

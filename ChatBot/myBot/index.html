@@ -35,7 +35,6 @@
     // Modify the request object to include additionalBodyProps with disease_intent
     const chatElement = document.getElementById('chat-element');
     var request = JSON.parse(chatElement.getAttribute('request'));
-    console(request);
     // Add additionalBodyProps object if it doesn't exist
     request.additionalBodyProps = request.additionalBodyProps || {};
 
