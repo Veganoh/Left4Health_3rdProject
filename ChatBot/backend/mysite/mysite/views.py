@@ -3,14 +3,6 @@ from django.http import JsonResponse, HttpResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
 from .models.intent_classification.svc.chatloader import generate_intent_svc, generate_response
-from .models.conversation.models.lstm.trainbot import train
-from .models.intent_classification.svc.trainbot_intent_svc import train_model_intent
-from .models.intent_classification.lstm.trainbot_intent_lstm import train_model_intent_lstm
-from .models.intent_classification.lstm.chatloader_intent_lstm import predict_intent_lstm
-from .models.intent_classification.bilstm.chatbot_intent_bilstm_pos import train_intent_bilstm_pos
-from .models.intent_classification.bilstm.chatbot_intent_bilstm_pos import predict_intent_bilstm_pos
-from .models.intent_classification.bert.chatbot_intent_bert import predict_intent_bert
-from .models.intent_classification.bert.chatbot_intent_bert_intents import predict_intent_bert_intents
 from .models.conversation.models.llm.chatgpt import generate_answer_with_intent
 from .models.conversation.models.llm.chatgpt import generate_answer_without_intent
 from .models.conversation.models.roberta.HaystackQuestionAnserting import generate_response_haystack
@@ -23,16 +15,16 @@ valid_diseases = ['melanoma', 'dermatitis', 'psoriasis', 'urticaria', 'lupus']
 
 @csrf_exempt
 def train_model(request):
-    train()
+    #train()
     return JsonResponse({"status": "error"})
 
 
 @csrf_exempt
 def train_intent(request, model_type):
-    match model_type:
-        case 'bilstm_pos': train_intent_bilstm_pos()
-        case 'svc': train_model_intent()
-        case 'lstm': train_model_intent_lstm(request)
+    #match model_type:
+    #    case 'bilstm_pos': train_intent_bilstm_pos()
+    #    case 'svc': train_model_intent()
+    #    case 'lstm': train_model_intent_lstm(request)
 
     return JsonResponse({"status": "success"})
 
@@ -78,7 +70,7 @@ def chatbot_message_intent(request, model_type):
                 # is_mostly_english does quick scan
                 if not is_mostly_english(query):
                     return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
-                answer = predict_intent_bilstm_pos(query)
+                #answer = predict_intent_bilstm_pos(query)
             case 'svc':
                 if not is_mostly_english(query):
                     return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
@@ -86,19 +78,19 @@ def chatbot_message_intent(request, model_type):
             case 'lstm':
                 if not is_mostly_english(query):
                     return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
-                answer = predict_intent_lstm(query)
+                #answer = predict_intent_lstm(query)
             case 'bert':
                 if not is_mostly_english(query):
                     return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
-                answer = predict_intent_bert(query)
+                #answer = predict_intent_bert(query)
             case 'multitaskbert':
                 if not is_mostly_english(query):
                     return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
-                answer = predict_intent_bert_intents(query)
+                #answer = predict_intent_bert_intents(query)
             case 'haystack':
                 if not is_mostly_english(query):
                     return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
-                answer = generate_response_haystack(query)
+                answer = generate_response_haystack(query, disease_intent)
                 print(answer)
                 # in case score is bad we think it is not correct
                 if answer.score < 0.6:
