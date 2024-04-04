@@ -1,0 +1,1 @@
+{'C': 3.3943222257859107, 'max_iter': 500, 'penalty': 'l2', 'solver': 'newton-cg'}
