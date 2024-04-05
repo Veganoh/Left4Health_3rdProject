@@ -112,8 +112,10 @@ def train_intent_and_disease_model():
 
 my_fine_tuned_bert = os.path.join(current_dir, 'model/my_fine_tuned_bert_intents')
 # Load the fine-tuned model
-model = tf.keras.models.load_model(my_fine_tuned_bert)
-
+try:
+    model = tf.keras.models.load_model(my_fine_tuned_bert)
+except IOError:
+    print("Oops!  That was no model trained. Train the model first!..")
 
 def predict_intent_bert_intents(input_sentence):
     # Load the fine-tuned BERT model

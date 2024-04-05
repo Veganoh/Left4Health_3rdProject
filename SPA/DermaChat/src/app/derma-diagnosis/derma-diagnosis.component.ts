@@ -1,17 +1,18 @@
 import { Component } from '@angular/core';
 import 'deep-chat';
+import { RequestInterceptor } from 'deep-chat/dist/types/interceptors';
 
 @Component({
   selector: 'app-derma-diagnosis',
   templateUrl: './derma-diagnosis.component.html',
   styleUrl: './derma-diagnosis.component.css'
 })
-export class DermaDiagnosisComponent {
 
+export class DermaDiagnosisComponent {
+  disease_intent = ''
   inputType = 'Text and Image';
   text: string = '';
   image!: File;
-
 
   changeInputType() {
     switch (this.inputType) {
@@ -32,9 +33,19 @@ export class DermaDiagnosisComponent {
   }
 
   initialMessages = [
-    { role: 'user', text: 'Diz me uma verdade' },
+    { role: 'user', text: 'Welcome to DermaChat!' },
     { role: 'ai', text: 'O Miguel é o maior rei do front-end' },
   ];
+
+  handleDiagnosticsClick() {
+   this.disease_intent = 'Dermatitis'
+  }
+
+requestInterceptor:RequestInterceptor = (details) => {
+  if (this.disease_intent)
+    details.body.disease_intent = this.disease_intent
+  return details
+}
 
 
   clearInputs() {
