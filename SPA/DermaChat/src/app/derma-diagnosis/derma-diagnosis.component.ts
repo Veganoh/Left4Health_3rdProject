@@ -9,11 +9,10 @@ import { RequestInterceptor } from 'deep-chat/dist/types/interceptors';
 })
 
 export class DermaDiagnosisComponent {
-  disease_intent = 'Melanoma'
+  disease_intent = ''
   inputType = 'Text and Image';
   text: string = '';
   image!: File;
-
 
   changeInputType() {
     switch (this.inputType) {
@@ -39,21 +38,8 @@ export class DermaDiagnosisComponent {
   ];
 
   handleDiagnosticsClick() {
-   
-    // Modify the request object to include additionalBodyProps with disease_intent
-    const chatElement = document.getElementById('chat-element');
-    if (chatElement)
-      {
-        var request = JSON.parse((chatElement.getAttribute('request') || ''));
-        // Add additionalBodyProps object if it doesn't exist
-        request.additionalBodyProps = request.additionalBodyProps || {};
-
-        // Add disease_intent to additionalBodyProps
-        request.additionalBodyProps.disease_intent = 'Melanoma';
-
-        chatElement.setAttribute('request', JSON.stringify(request));
-    } 
-}
+   this.disease_intent = 'Dermatitis'
+  }
 
 requestInterceptor:RequestInterceptor = (details) => {
   if (this.disease_intent)
