@@ -16,7 +16,7 @@
 
                     <div class="d-flex justify-content-around ">
                         <button (click)="changeInputType()">{{ inputType }}</button>
-                        <button type="submit">Diagnose</button>    
+                        <button (click)="handleDiagnosticsClick()"type="submit">Diagnose</button>    
                     </div>
                 </div>
 
@@ -29,13 +29,17 @@
 
 
             <div class="threetwo">
-                <deep-chat demo="true"
+                <deep-chat demo="false" id="chat-element"
                 avatars='{
                     "ai": {
                         "src": "assets/derma-diagnosis/favicon.png"
                     }
                 }'
-
+                request='{
+                    "url": "http://localhost:8000/chatbot/intents/haystack",
+                    "method": "POST"
+                     }'
+                [requestInterceptor]="requestInterceptor"
                 [initialMessages]="initialMessages"
                 ></deep-chat>
 

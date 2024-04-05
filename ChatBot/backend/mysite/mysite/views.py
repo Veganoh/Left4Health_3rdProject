@@ -98,8 +98,9 @@ def chatbot_message_intent(request, model_type):
             case 'haystack':
                 if not is_mostly_english(query):
                     return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
-                answer = generate_response_haystack(query)
+                answer = generate_response_haystack(query, disease_intent)
                 print(answer)
+
                 # in case score is bad we think it is not correct
                 if answer.score < 0.6:
                     # Return "Disease not detected" as the answer
@@ -107,7 +108,11 @@ def chatbot_message_intent(request, model_type):
                 if 'OOS' in answer.meta['abstract']:
                     return JsonResponse({"role": "ai", "text": "I am sorry but I am trained to answer about skin diseases only"})
 
-                return JsonResponse({"role": "ai", "text": answer.content.split('[SEP]')[1]})
+                # handle response for pretty print
+                resp = answer.content.split('[SEP]')[1]
+                resp = resp.replace('"', '')
+
+                return JsonResponse({"role": "ai", "text": resp})
             case 'gpt':
                 if process_disease:
                     formatted_answer = generate_answer_with_intent(data['messages'], disease_intent)
