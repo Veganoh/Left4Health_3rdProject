@@ -50,7 +50,7 @@ indexing_pipeline.connect("document_embedder", "document_writer")
 
 indexing_pipeline.run({"document_splitter": {"documents": docs}})
 
-
+#not using gpu because mac has issues with it
 text_embedder = SentenceTransformersTextEmbedder(
     model="BAAI/bge-small-en-v1.5", device=ComponentDevice.from_str("cpu")
 )
