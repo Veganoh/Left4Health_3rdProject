@@ -1,7 +1,16 @@
 Welcome to DermaChat Project!
-To run the chatbot backend:
-pip3 install keras
-pip3 install tensorflow
-cd ChatBot/backend/mysite
-python3 manage.py runserver
 
+Structure of the code repo:
+Chatbot: - The chatbot backend including django server (/backend/mysite), and models trained. PLease check
+dermachat_assistant_bot.ipynb to understand how it was built.
+ClassificationOfSkinDiseases: - Repo for jupyter image recognition models.
+SPA: Angular application for User Interface
+diagnosis: Diagnosis jupyter notebook was prepared to diagnose a disease based on symptoms
+
+
+To Test the application:
+1 - Start the backend, for this go to cd ChatBot/backend/mysite
+and type : python3 manage.py runserver
+2 - Start the frontend, for this go to SPA/Dermachat and type: ng serve -o --port 63342
+
+Please note there are a number of componenbts that need to be installed such as tensorflow, keras, haystack-ai

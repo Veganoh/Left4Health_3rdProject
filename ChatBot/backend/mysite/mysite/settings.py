@@ -56,6 +56,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://sub.example.com",
     "http://localhost:63342",
     "http://127.0.0.1:63342",
+    "http://localhost:63343",
+    "http://127.0.0.1:63343",
 ]
 
 ROOT_URLCONF = "mysite.urls"
