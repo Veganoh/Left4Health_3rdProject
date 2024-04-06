@@ -14,6 +14,7 @@ from .models.intent_classification.bert.chatbot_intent_bert_intents import predi
 from .models.conversation.models.llm.chatgpt import generate_answer_with_intent
 from .models.conversation.models.llm.chatgpt import generate_answer_without_intent
 from .models.conversation.models.roberta.HaystackQuestionAnserting import generate_response_haystack
+from .models.conversation.models.roberta.HaystackQuestionAnserting import generate_response_haystack_llm
 from nltk.corpus import words
 from nltk.tokenize import word_tokenize
 
@@ -77,34 +78,35 @@ def chatbot_message_intent(request, model_type):
             case 'bilstm_pos':
                 # is_mostly_english does quick scan
                 if not is_mostly_english(query):
-                    return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
+                    return JsonResponse({"role": "ai", "text": "I couldn't understand what you said, can you please rephrase?"})
                 answer = predict_intent_bilstm_pos(query)
             case 'svc':
                 if not is_mostly_english(query):
-                    return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
+                    return JsonResponse({"role": "ai", "text": "I couldn't understand what you said, can you please rephrase?"})
                 answer = generate_intent_svc(query)
             case 'lstm':
                 if not is_mostly_english(query):
-                    return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
+                    return JsonResponse({"role": "ai", "text": "I couldn't understand what you said, can you please rephrase?"})
                 answer = predict_intent_lstm(query)
             case 'bert':
                 if not is_mostly_english(query):
-                    return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
+                    return JsonResponse({"role": "ai", "text": "I couldn't understand what you said, can you please rephrase?"})
                 answer = predict_intent_bert(query)
             case 'multitaskbert':
                 if not is_mostly_english(query):
-                    return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
+                    return JsonResponse({"role": "ai", "text": "I couldn't understand what you said, can you please rephrase?"})
                 answer = predict_intent_bert_intents(query)
             case 'haystack':
                 if not is_mostly_english(query):
-                    return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
+                    return JsonResponse({"role": "ai", "text": "I couldn't understand what you said, can you please rephrase?"})
                 answer = generate_response_haystack(query, disease_intent)
                 print(answer)
 
-                # in case score is bad we think it is not correct
+                # in case score is bad we think it is not correct, or we dont know, we ask GPT
                 if answer.score < 0.6:
                     # Return "Disease not detected" as the answer
-                    return JsonResponse({"role": "ai", "text": "Disease not detected"})
+                    answer = generate_response_haystack_llm(query, disease_intent)
+                    return JsonResponse({"role": "ai", "text": answer})
                 if 'OOS' in answer.meta['abstract']:
                     return JsonResponse({"role": "ai", "text": "I am sorry but I am trained to answer about skin diseases only"})
 
