@@ -19,9 +19,13 @@ main {
     margin-inline: 1%;
 }
 
+nav{
+    height: 4%;
+}
+
 .banner {
     display: block;
-    margin: 1% auto;
+    margin-block: 1% ;
     width: 100%;
     background-color: rgba(243, 247, 251, 0.9);
 }
@@ -34,11 +38,6 @@ main {
 }
 
 
-.inputInfo {
-    width: 90%;
-    height: 100%;
-    margin-right: 1% ;
-}
 
 .threetwo {
     width: 100%;
@@ -49,14 +48,14 @@ main {
     width: 100% !important;
     height: 100% !important;
     border-radius: 20px !important;
-    background-color: #f7f7f7 !important;
+    background-color: rgba(255, 255, 255, 0.644) !important;
 }
 
 button {
     margin: 1% auto;
     width: 30%;
-    height: 10%;
-    background-color: rgba(255, 255, 255, 0.514);
+    height: 100%;
+    background-color: rgb(255, 255, 255);
     border-radius: 10px;
 }
 
@@ -66,9 +65,63 @@ textarea {
     border-radius: 10px;
     background-color: #f7f7f7;
     resize: none;
-
+    align-self: center;
 }
 
+
+.inputInfo {
+    align-self: center;
+    background: rgba(255, 255, 255, 0.603);
+    border-radius: 20px;
+    width: 40%;
+    height: 70%;
+    margin-right: 1% ;
+}
+
+.diseaseInfo {
+    align-self: center;
+    background: rgba(255, 255, 255, 0.603);
+    border-radius: 20px;
+    width: 40%;
+    height: 50%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin-right: 1% ;
+}
+
+
+.notice {
+    margin-top: auto;
+    font-size: 12px;
+    line-height: 1;
+    padding: 5px;
+}
+
+.notice p {
+    margin: 5px 0;
+}
+
+
+.diseaseInfo h2 {
+    padding-top: 1%;
+    color: red;
+    margin: 0;
+    padding-bottom: 5px;
+    text-align: center;
+}
+
+.diseaseInfo h3 {
+    color: rgb(10, 4, 4);
+    margin: 0;
+    padding-bottom: 5px;
+    text-align: center;
+}
+
+.diseaseInfo p {
+    color: rgb(10, 4, 4);
+    margin: 0;
+    padding-bottom: 5px;
+    text-align: center;
+}
 
 
 .inputInfoUp {
@@ -79,8 +132,8 @@ textarea {
     align-self: center;
 }
 
-.inputInfoDown {
-    width: 90%;
-    height: 100%;
-    margin-right: 1% ;
+
+
+input {
+    align-self: center;
 }
