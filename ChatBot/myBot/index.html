@@ -21,7 +21,7 @@
       id="chat-element"
       demo="false"
       request='{
-        "url": "http://localhost:8000/chatbot/intents/gpt",
+        "url": "http://localhost:8000/chatbot/intents/haystack",
         "method": "POST"
          }'
     ></deep-chat>
@@ -34,8 +34,7 @@
   if (disease) {
     // Modify the request object to include additionalBodyProps with disease_intent
     const chatElement = document.getElementById('chat-element');
-    const request = JSON.parse(chatElement.getAttribute('request'));
-
+    var request = JSON.parse(chatElement.getAttribute('request'));
     // Add additionalBodyProps object if it doesn't exist
     request.additionalBodyProps = request.additionalBodyProps || {};
 

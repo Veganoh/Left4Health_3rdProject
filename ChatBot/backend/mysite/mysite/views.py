@@ -13,6 +13,9 @@ from .models.intent_classification.bert.chatbot_intent_bert import predict_inten
 from .models.intent_classification.bert.chatbot_intent_bert_intents import predict_intent_bert_intents
 from .models.conversation.models.llm.chatgpt import generate_answer_with_intent
 from .models.conversation.models.llm.chatgpt import generate_answer_without_intent
+from .models.conversation.models.roberta.HaystackQuestionAnserting import generate_response_haystack
+from .models.conversation.models.roberta.HaystackQuestionAnserting import generate_response_haystack_llm
+from .models.conversation.models.roberta.Tester import get_analytics_queries
 from nltk.corpus import words
 from nltk.tokenize import word_tokenize
 
@@ -50,6 +53,12 @@ def get_response(request) :
 
 @csrf_exempt
 def chatbot_message_intent(request, model_type):
+    # this rest api service is called from chatbot
+    # depending on parameter one of the models will be used
+    # after many tests at the moment llm is the most prolific followd by haystack
+    # haystack hybrid retrieval colab can be found
+    # at https://colab.research.google.com/github/deepset-ai/haystack-tutorials/blob/main/tutorials/33_Hybrid_Retrieval.ipynb
+
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
         print(data)
@@ -68,25 +77,45 @@ def chatbot_message_intent(request, model_type):
         answer = 'NA'
         match model_type:
             case 'bilstm_pos':
+                # is_mostly_english does quick scan
                 if not is_mostly_english(query):
-                    return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
+                    return JsonResponse({"role": "ai", "text": "I couldn't understand what you said, can you please rephrase?"})
                 answer = predict_intent_bilstm_pos(query)
             case 'svc':
                 if not is_mostly_english(query):
-                    return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
+                    return JsonResponse({"role": "ai", "text": "I couldn't understand what you said, can you please rephrase?"})
                 answer = generate_intent_svc(query)
             case 'lstm':
                 if not is_mostly_english(query):
-                    return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
+                    return JsonResponse({"role": "ai", "text": "I couldn't understand what you said, can you please rephrase?"})
                 answer = predict_intent_lstm(query)
             case 'bert':
                 if not is_mostly_english(query):
-                    return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
+                    return JsonResponse({"role": "ai", "text": "I couldn't understand what you said, can you please rephrase?"})
                 answer = predict_intent_bert(query)
             case 'multitaskbert':
                 if not is_mostly_english(query):
-                    return JsonResponse({"role": "ai", "text": "Sentence is malformed"})
+                    return JsonResponse({"role": "ai", "text": "I couldn't understand what you said, can you please rephrase?"})
                 answer = predict_intent_bert_intents(query)
+            case 'haystack':
+                if not is_mostly_english(query):
+                    return JsonResponse({"role": "ai", "text": "I couldn't understand what you said, can you please rephrase?"})
+                answer = generate_response_haystack(query, disease_intent)
+                print(answer)
+
+                # in case score is bad we think it is not correct, or we dont know, we ask GPT
+                if answer.score < 0.6:
+                    # Return "Disease not detected" as the answer
+                    answer = generate_response_haystack_llm(query, disease_intent)
+                    return JsonResponse({"role": "ai", "text": answer})
+                if 'OOS' in answer.meta['abstract']:
+                    return JsonResponse({"role": "ai", "text": "I am sorry but I am trained to answer about skin diseases only"})
+
+                # handle response for pretty print
+                resp = answer.content.split('[SEP]')[1]
+                resp = resp.replace('"', '')
+
+                return JsonResponse({"role": "ai", "text": resp})
             case 'gpt':
                 if process_disease:
                     formatted_answer = generate_answer_with_intent(data['messages'], disease_intent)
@@ -168,3 +197,49 @@ def is_mostly_english(sentence, threshold=0.6):
 
     # Check if the percentage of English words is above the threshold
     return english_percentage >= threshold
+
+
+def evaluate_haystack_results(request):
+    analytics = get_analytics_queries()
+    intent = None
+    valid_arr = []
+    llm_arr = []
+    invalid_arr=[]
+
+    # valid queries
+    for query in analytics['list_of_queries_valid']:
+        answer = generate_response_haystack(query['query'], intent)
+        ans = answer.content.split('[SEP]')[1]
+        result = f'[ {query}, Answer : {answer}, Ranking: {answer.score}'
+        valid_arr.append(result)
+        print(result)
+        # in case score is bad we think it is not correct, or we dont know, we ask GPT
+        if answer.score < 0.6:
+            # Return "Disease not detected" as the answer
+            llm_answer = generate_response_haystack_llm(query['query'], intent)
+            result = f'[ {query}, Answer : {answer}, Ranking: {answer.score}, LLM_Answer: {llm_answer}'
+            print(result)
+            llm_arr.append(result)
+
+    # invalid queries
+    for query in analytics['list_of_queries_invalid']:
+        print(query)
+        print(query['query'])
+        answer = generate_response_haystack(query['query'], intent)
+        ans = answer.content.split('[SEP]')[1]
+        result = f'[ {query}, Answer : {answer}, Ranking: {answer.score}'
+        print(result)
+        invalid_arr.append(result)
+
+
+    with open('chatbot_report_valid.txt', "w") as file:
+        for string in valid_arr:
+            file.write(string + "\n")
+    with open('chatbot_report_valid_augmented.txt', "w") as file:
+        for string in llm_arr:
+            file.write(string + "\n")
+    with open('chatbot_report_invalid.txt', "w") as file:
+        for string in invalid_arr:
+            file.write(string + "\n")
+
+    return JsonResponse({"status": "success"})

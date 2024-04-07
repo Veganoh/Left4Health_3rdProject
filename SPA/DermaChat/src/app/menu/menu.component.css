@@ -1,0 +1,269 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+
+menu {
+    display: flex;
+	position: fixed;
+    flex-direction: column;
+    padding: 0; 
+    margin: 0;
+    height: 100%;
+	width: 100%;
+	font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    overflow: auto;
+	background: linear-gradient(315deg, rgba(208, 226, 211, 0.5) 3%,rgba(126, 199, 139, 0.5) 38%, rgb(70, 77, 54, 0.5) 68%,  rgb(8, 28, 21, 0.5) 98%);
+	background-color: rgb(70, 77, 54, 0.5);
+    animation: gradient 15s ease infinite;
+}
+
+.banner {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 100vw;
+	background-color: rgb(243, 247, 251,0.9);
+	margin-bottom: 1%;
+    margin-top: 1%;
+
+}
+
+
+header {
+    text-align: center;
+    width: 100vw;
+	height: auto;
+    color: white;
+}
+
+header h1 {
+	font-size: 3em;
+	margin-top: 0;
+	margin-bottom: 0;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 300;
+	letter-spacing: 1px;
+}
+
+
+.threeholder {
+	position: relative;
+	width: 100vw;
+	height:100vw;
+    align-self: center;
+	margin-bottom: 1%;
+}
+
+
+.threeone {
+	align-items: center;
+    text-align: center;
+    width: 100vw;
+    height: 100%;
+    background: rgb(70, 77, 54, 0.3);
+	margin-left: 1%;
+	margin-right: 1%;
+    transition: all 0.25s;
+	background-image: url("/assets/menu/anxiety.jpg");
+	background-repeat: no-repeat;
+	background-position: center;
+    background-size: cover;
+}
+
+.threetwo {
+	align-items: center;
+    text-align: center;
+    width: 100vw;
+    height: 100%;
+    background: rgb(70, 77, 54, 0.3);
+	margin-right: 1%;
+    transition: all 0.25s;
+	background-image: url("/assets/menu/triage.jpg");
+	background-repeat: no-repeat;
+	background-position: center;
+    background-size: cover;
+}
+
+.threethree {
+	align-items: center;
+    text-align: center;
+
+    width: 100vw;
+    height: 100%;
+    background: rgb(70, 77, 54, 0.3);
+	margin-right: 1%;
+    transition: all 0.25s;
+	background-image: url("/assets/menu/dermatology.jpg");
+	background-repeat: no-repeat;
+	background-position: center;
+    background-size: cover;
+}
+
+.threefour {
+	align-items: center;
+    text-align: center;
+    width: 100vw;
+    height: 100%;
+    background: rgb(70, 77, 54, 0.3);
+	margin-right: 1%;
+    transition: all 0.25s;
+	background-image: url("/assets/menu/soon.jpg");
+	background-repeat: no-repeat;
+	background-position: center;
+    background-size: cover;
+}
+
+.threeone:hover,
+.threetwo:hover,
+.threethree:hover,
+.threefour:hover {
+	background: rgba(86, 102, 71, 0.7);
+}
+
+
+.threeone:hover .circleborder,
+.threetwo:hover .circleborder,
+.threethree:hover .circleborder,
+.threefour:hover .circleborder{
+	background: #ADBC9F;
+}
+
+
+
+.circlepic {
+    width: 110px;
+    height: 110px;
+    background: rgb(18, 55, 42);
+    border-radius: 50%;
+    opacity: 0;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+
+
+
+.threeone:hover .circlepic {
+    opacity: 1;
+}
+
+.threetwo:hover .circlepic {
+    opacity: 1;
+}
+
+.threethree:hover .circlepic {
+    opacity: 1;
+}
+
+/*Test*/
+.threefour:hover h4,
+.threeone:hover h4,
+.threetwo:hover h4,
+.threethree:hover h4 {
+    opacity: 1;
+}
+
+.threefour:hover p,
+.threeone:hover p,
+.threetwo:hover p,
+.threethree:hover p {
+    opacity: 1;
+}
+
+/*Test*/
+
+.circleborder {
+	margin-left: 9%;
+	width: 90px;
+	height: 90px;
+	background: #ADBC9F;
+	border-radius: 50%;
+}
+
+
+
+i {
+    margin-top: 50%;
+}
+
+
+
+.threeholder h4 {
+	font-size: 30px;
+	font-weight: bold;
+	color: white;
+    opacity: 0;
+}
+
+.threeholder p {
+	display: inline-block;
+	font-size: 20px;
+	color:#ffffff;
+	letter-spacing: 1px;
+    opacity: 0;
+}
+
+
+
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 0%;
+    }
+    50% {
+        background-position: 100% 100%;
+    }
+    100% {
+        background-position: 0% 0%;
+    }
+}
+
+.wave {
+    background: rgb(255 255 255 / 25%);
+    border-radius: 1000% 1000% 0 0;
+    position: fixed;
+    width: 200%;
+    height: 12em;
+    animation: wave 10s -3s linear infinite;
+    transform: translate3d(0, 0, 0);
+    opacity: 0.8;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+}
+
+.wave:nth-of-type(2) {
+    bottom: -1.25em;
+    animation: wave 18s linear reverse infinite;
+    opacity: 0.8;
+}
+
+.wave:nth-of-type(3) {
+    bottom: -2.5em;
+    animation: wave 20s -1s reverse infinite;
+    opacity: 0.9;
+}
+
+@keyframes wave {
+    2% {
+        transform: translateX(1);
+    }
+
+    25% {
+        transform: translateX(-25%);
+    }
+
+    50% {
+        transform: translateX(-50%);
+    }
+
+    75% {
+        transform: translateX(-25%);
+    }
+
+    100% {
+        transform: translateX(1);
+    }	
+}
+
+
