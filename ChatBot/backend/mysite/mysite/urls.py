@@ -17,9 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from .views import chatbot_message_intent
+from .views import evaluate_haystack_results
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('chatbot/intents/<str:model_type>', chatbot_message_intent, name='chatbot_intents')
+    path('chatbot/intents/<str:model_type>', chatbot_message_intent, name='chatbot_intents'),
+    path('chatbot/generate_test_results',evaluate_haystack_results, name='evaluate_haystack_results' )
 
 ]
