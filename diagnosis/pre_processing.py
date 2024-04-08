@@ -1,7 +1,8 @@
 import re
-from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.corpus import stopwords
 import nltk
+import joblib
+import pandas as pd
 
 
 def pre_processing(data):
@@ -15,7 +16,7 @@ def pre_processing(data):
         lambda x: ' '.join([word for word in x.split() if len(word) > 1]))
     data['User_input_preprocessed'] = data['User_input_preprocessed'].str.lower()
     data['User_input_preprocessed'] = data['User_input_preprocessed'].apply(lambda x: re.sub(r'[^\w\s]', '', x))
-    data['User_input_preprocessed'] = data['User_input_preprocessed'].str.replace('\d+', '')
+    data['User_input_preprocessed'] = data['User_input_preprocessed'].str.replace(r'\d+', '')
 
     tokenizer = nltk.tokenize.WhitespaceTokenizer()
     data['User_input_preprocessed'] = data['User_input_preprocessed'].apply(lambda x: tokenizer.tokenize(x))
@@ -44,24 +45,16 @@ def tf_stemming(data):
 def tf_lemmatization(data):
     pre_processing(data)
     lemmatization(data)
-    tf = joblib.load('Vectorizer/tfidf_stem.pkl')
+    tf = joblib.load('Vectorizer/tfidf_lem.pkl')
     return tf.transform(data['User_input_preprocessed_lem'].apply(' '.join))
 
 
-# Testa aqui mariana
-import pandas as pd
-import joblib
 model = joblib.load('Models/LR/LR_stem_tfidf.pkl')
 
-def getDiagnosis(user_input):
-    data = pd.DataFrame(columns=['User_input'])
-    data.columns = data.columns.astype(str)
-    data['User_input'] = [user_input]
+
+def runModel(user_input):
+    data = pd.DataFrame({'User_input': [user_input]})
     processed_data = tf_stemming(data)
     prediction = model.predict(processed_data)
     disease = prediction[0]
-    print(disease)
-
-
-getDiagnosis(
-    'I have been experiencing a skin rash on my arms, legs, and torso for the past few weeks. It is red, itchy, and covered in dry, scaly patches.')
+    return disease

@@ -7,13 +7,21 @@ import { Observable } from 'rxjs';
 })
 export class DermaDiagnosisService {
 
-  private apiUrl = 'http://127.0.0.1:5000/api/diagnosis'; // URL a mudar!
+  private apiUrl = 'http://127.0.0.1:5000/api/diagnosis';
 
 
   constructor(private http: HttpClient) { }
 
-  public getDiagnosis(image: File, text: string): Observable<any> {
-      return this.http.post(this.apiUrl, {image, text});
+  getTextDiagnosis(text: string): Observable<any> {
+    const inputData = { "User_input": text };
+    return this.http.post<any>(`${this.apiUrl}/text`, inputData);
+  }
+
+  getImageDiagnosis(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    return this.http.post<any>(`${this.apiUrl}/image`, formData); 
   }
 
 }

@@ -1,14 +1,11 @@
-import joblib
-import pandas as pd
 import pre_processing
 from flask import Flask, jsonify, request
+import os
 
 app = Flask(__name__)
 
-model = joblib.load('Models/LR/LR_stem_tfidf.pkl')
 
-
-@app.route('/api/diagnosis', methods=['POST', 'OPTIONS'])
+@app.route('/api/diagnosis/text', methods=['POST', 'OPTIONS'])
 def diagnosis():
     if request.method == 'OPTIONS':
         headers = {
@@ -18,18 +15,59 @@ def diagnosis():
         }
         return '', 204, headers
 
-    user_input = request.get_json()
-    if not user_input:
-        return jsonify({'error': 'Missing parameters'}), 400
+    user_input_json = request.get_json()
+    if not user_input_json or 'User_input' not in user_input_json:
+        return jsonify({'error': 'Missing or invalid parameters'}), 400
     else:
-        data = pd.DataFrame(columns=['User_input'])
-        data.columns = data.columns.astype(str)
-        data['User_input'] = [user_input]
-        processed_data = pre_processing.tf_stemming(data)
-        prediction = model.predict(processed_data)
-        disease = prediction[0]
+        user_input = user_input_json['User_input']
+        disease = pre_processing.runModel(user_input)
         response = jsonify({'diagnosis': disease})
+        response.headers.add('Access-Control-Allow-Origin', '*')
     return response
+
+
+from werkzeug.utils import secure_filename
+
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.route('/api/diagnosis/image', methods=['POST', 'OPTIONS'])
+def diagnosis_image():
+    if request.method == 'OPTIONS':
+        headers = {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST',
+            'Access-Control-Allow-Headers': 'Content-Type',
+        }
+        return '', 204, headers
+
+    if 'image' not in request.files:
+        response = jsonify({'error': 'No image part'})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response, 400
+
+    file = request.files['image']
+
+
+
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+        response = jsonify({'message': 'File uploaded successfully'})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response, 200
+    else:
+        response = jsonify({'error': 'Invalid file type'})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response, 400
+
 
 
 if __name__ == '__main__':

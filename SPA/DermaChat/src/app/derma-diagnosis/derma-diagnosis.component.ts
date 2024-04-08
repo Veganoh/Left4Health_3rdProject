@@ -14,16 +14,39 @@ export class DermaDiagnosisComponent {
   diagnosis_received = false;
   inputType = 'Text and Image';
   text: string = '';
-  image!: File;
+  image: File | null = null;
 
   constructor(private dermaDiagnosisService: DermaDiagnosisService) {}
 
   handleDiagnosticsClick() {
-    
-    this.dermaDiagnosisService.getDiagnosis(this.image, this.text).subscribe((response) => {
-      this.disease_intent = response.disease_intent;
-      this.diagnosis_received = true;
+    if (this.inputType === 'Text') {
+      this.handleTextDiagnosis();
+    } else if (this.inputType === 'Image') {
+      this.handleImageDiagnosis();
+    } else if (this.inputType === 'Text and Image') {
+      this.handleTextDiagnosis();
+      this.handleImageDiagnosis();
+    }
+  }
+
+  handleTextDiagnosis() {
+    this.dermaDiagnosisService.getTextDiagnosis(this.text).subscribe((response) => {
+      if (response && response.diagnosis) {
+        this.disease_intent = response.diagnosis;
+        this.diagnosis_received = true;;
+      }
     });
+  }
+
+  handleImageDiagnosis() {
+    if (this.image) {
+      this.dermaDiagnosisService.getImageDiagnosis(this.image).subscribe((response) => {
+        if (response && response.diagnosis) {
+          this.disease_intent = response.diagnosis;
+          this.diagnosis_received = true;
+        }
+      });
+    }
   }
 
 
