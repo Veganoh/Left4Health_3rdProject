@@ -37,15 +37,15 @@ def lemmatization(data):
 def tf_stemming(data):
     pre_processing(data)
     stemming(data)
-    tf = TfidfVectorizer()
-    return tf.fit_transform(data['User_input_preprocessed_stem'].apply(' '.join))
+    tf = joblib.load('Vectorizer/tfidf_stem.pkl')
+    return tf.transform(data['User_input_preprocessed_stem'].apply(' '.join))
 
 
 def tf_lemmatization(data):
     pre_processing(data)
     lemmatization(data)
-    tf = TfidfVectorizer()
-    return tf.fit_transform(data['User_input_preprocessed_lem'].apply(' '.join))
+    tf = joblib.load('Vectorizer/tfidf_stem.pkl')
+    return tf.transform(data['User_input_preprocessed_lem'].apply(' '.join))
 
 
 # Testa aqui mariana
