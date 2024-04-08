@@ -1,70 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" href="/">Home</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="/derma-chat/">Derma Chat <span class="sr-only">(current)</span></a>
-              </li>
-          </ul>
-        </div>
+   <body>
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+         <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+               <li class="nav-item">
+                  <a class="nav-link" href="/">Home</a>
+               </li>
+               <li class="nav-item active">
+                  <a class="nav-link" href="/derma-chat/">Derma Chat <span class="sr-only">(current)</span></a>
+               </li>
+            </ul>
+         </div>
       </nav>
-
-    <header>
-        <img class="banner" src="assets/derma-diagnosis/banner.svg" alt="banner">
-    </header>
-    <main>
-        <div class="threeholder">
-            
+      <header>
+         <img class="banner" src="assets/derma-diagnosis/banner.svg" alt="banner">
+      </header>
+      <main>
+         <div class="threeholder">
             <div *ngIf="diagnosis_received === false" class="inputInfo flex d-flex flex-column justify-content-center">
-                <input type="file" accept="image/*" [disabled]="inputType == 'Text'"><br><br>
-                    <textarea  id="text" name="text" rows="4" cols="50" [disabled]="inputType == 'Image'" [(ngModel)]="text"></textarea><br><br>
-
-
-                    <div class="d-flex justify-content-around ">
-                        <button (click)="changeInputType()">{{ inputType }}</button>
-                        <button (click)="handleDiagnosticsClick()"type="submit">Diagnose</button>    
-                    </div>
+               <input type="file"(change)="onChangeFile($event)" [disabled]="inputType == 'Text'"><br><br>
+               <textarea  id="text" name="text" rows="4" cols="50" [disabled]="inputType == 'Image'" [(ngModel)]="text"></textarea><br><br>
+               <div class="d-flex justify-content-around ">
+                  <button (click)="changeInputType()">{{ inputType }}</button>
+                  <button (click)="handleDiagnosticsClick()"type="submit">Diagnose</button>    
+               </div>
             </div>
-
             <div *ngIf="diagnosis_received === true" class="diseaseInfo flex d-flex flex-column">
-                    <div class="diagnosis">
-                        <h2><strong>DIAGNOSIS</strong></h2>
-                        <h3><strong>{{ disease_intent }}</strong></h3>
-                        <p> Feel free to utilize our chatbot to learn more about the disease. We're here to provide you with comprehensive information and support</p>
-                    </div>
-                
-                    <div class="notice">
-                        <p><strong>Important Notice:</strong></p>
-                        <p>The information provided here is not a substitute for professional medical advice. If you have concerns about your skin condition, please consult a qualified healthcare professional. Please note that diagnoses provided here may not be accurate and should not be solely relied upon for medical decisions.</p>
-                    </div>
+               <div class="diagnosis">
+                  <h2><strong>DIAGNOSIS</strong></h2>
+                  <h3><strong>{{ disease_intent }}</strong></h3>
+                  <p> Feel free to utilize our chatbot to learn more about the disease. We're here to provide you with comprehensive information and support</p>
+               </div>
+               <div class="notice">
+                  <p><strong>Important Notice:</strong></p>
+                  <p>The information provided here is not a substitute for professional medical advice. If you have concerns about your skin condition, please consult a qualified healthcare professional. Please note that diagnoses provided here may not be accurate and should not be solely relied upon for medical decisions.</p>
+               </div>
             </div>
-            
-
-
             <div class="threetwo">
-                <deep-chat demo="false" id="chat-element"
-                avatars='{
-                    "ai": {
-                        "src": "assets/derma-diagnosis/favicon.png",
-                        "styles": {"avatar": {"height": "60px", "width": "60px"}}
-
-                    }
-                }'
-                request='{
-                    "url": "http://localhost:8000/chatbot/intents/haystack",
-                    "method": "POST"
-                     }'
-                [requestInterceptor]="requestInterceptor"
-                [initialMessages]="initialMessages"
-                ></deep-chat>
-
+               <deep-chat demo="false" id="chat-element"
+               avatars='{
+               "ai": {
+               "src": "assets/derma-diagnosis/favicon.png",
+               "styles": {"avatar": {"height": "60px", "width": "60px"}}
+               }
+               }'
+               request='{
+               "url": "http://localhost:8000/chatbot/intents/haystack",
+               "method": "POST"
+               }'
+               [requestInterceptor]="requestInterceptor"
+               [initialMessages]="initialMessages"
+               ></deep-chat>
             </div>
-        </div>
-    </main>
-</body>
+         </div>
+      </main>
+   </body>
 </html>

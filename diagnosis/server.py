@@ -1,5 +1,6 @@
 import pre_processing
 from flask import Flask, jsonify, request
+from werkzeug.utils import secure_filename
 import os
 
 app = Flask(__name__)
@@ -26,16 +27,9 @@ def diagnosis():
     return response
 
 
-from werkzeug.utils import secure_filename
+UPLOAD_FOLDER = 'Uploads'
 
-UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-
-
-def allowed_file(filename):
-    return '.' in filename and \
-        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/api/diagnosis/image', methods=['POST', 'OPTIONS'])
 def diagnosis_image():
@@ -48,26 +42,28 @@ def diagnosis_image():
         return '', 204, headers
 
     if 'image' not in request.files:
-        response = jsonify({'error': 'No image part'})
+        response = jsonify({'error': 'No file part'})
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response, 400
 
     file = request.files['image']
 
-
-
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(filepath)
-        response = jsonify({'message': 'File uploaded successfully'})
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        return response, 200
-    else:
-        response = jsonify({'error': 'Invalid file type'})
+    if file.filename == '':
+        response = jsonify({'error': 'No selected file'})
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response, 400
 
+    if file:
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+
+        response = jsonify({'diagnosis': 'YES'})
+    else:
+        response = jsonify({'error': 'Invalid file format'})
+
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 
 if __name__ == '__main__':

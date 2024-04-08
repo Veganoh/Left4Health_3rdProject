@@ -39,13 +39,21 @@ export class DermaDiagnosisComponent {
   }
 
   handleImageDiagnosis() {
-    if (this.image) {
-      this.dermaDiagnosisService.getImageDiagnosis(this.image).subscribe((response) => {
+    if (this.image && (this.image.type == 'image/png' || this.image.type == 'image/jpg')) {
+      const formData = new FormData();
+      formData.append('image', this.image, 'disease.png');
+      this.dermaDiagnosisService.getImageDiagnosis(formData).subscribe((response) => {
         if (response && response.diagnosis) {
           this.disease_intent = response.diagnosis;
           this.diagnosis_received = true;
         }
       });
+    }
+  }
+
+  onChangeFile(event: any) {
+    if (event.target.files.length > 0) {
+      this.image = event.target.files[0];
     }
   }
 
@@ -72,8 +80,6 @@ export class DermaDiagnosisComponent {
   initialMessages = [
     { role: 'ai', text: "Welcome to our Dermatology Assistant! 🌟 Whether you have questions about a skin condition or simply want to learn more about dermatological health, you're in the right place. You have the option to start chatting with our chatbot right away, or you can upload an image of your skin concern or describe it in text to receive a diagnosis. If you choose to upload an image or describe your condition, the chatbot will provide information specifically related to the diagnosed disease. Our chatbot is here to assist you with any skin-related inquiries. Let's get started on your journey to understanding dermatology better!" },
   ];
-
-
 
 requestInterceptor:RequestInterceptor = (details) => {
   if (this.disease_intent)

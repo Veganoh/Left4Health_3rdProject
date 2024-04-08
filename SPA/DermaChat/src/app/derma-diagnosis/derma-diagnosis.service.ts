@@ -17,10 +17,7 @@ export class DermaDiagnosisService {
     return this.http.post<any>(`${this.apiUrl}/text`, inputData);
   }
 
-  getImageDiagnosis(file: File): Observable<any> {
-    const formData = new FormData();
-    formData.append('image', file);
-    
+  getImageDiagnosis(formData: FormData): Observable<any> {    
     return this.http.post<any>(`${this.apiUrl}/image`, formData); 
   }
 
