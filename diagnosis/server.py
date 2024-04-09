@@ -1,8 +1,8 @@
 import pre_processing
+import image_processor 
 from flask import Flask, jsonify, request
 from werkzeug.utils import secure_filename
 import os
-
 app = Flask(__name__)
 
 
@@ -55,16 +55,23 @@ def diagnosis_image():
 
     if file:
         filename = secure_filename(file.filename)
+        if not os.path.exists(app.config['UPLOAD_FOLDER']):
+            os.makedirs(app.config['UPLOAD_FOLDER'])
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
 
-        response = jsonify({'diagnosis': 'YES'})
+        # Chamar o método process_image() da classe ImageProcessor
+        result = image_processor.process_image(filepath)
+        response = jsonify({'diagnosis': result})
     else:
         response = jsonify({'error': 'Invalid file format'})
 
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
+@app.route('/')
+def index():
+    return 'Hello, world!'
 
 if __name__ == '__main__':
     app.run(debug=False)
