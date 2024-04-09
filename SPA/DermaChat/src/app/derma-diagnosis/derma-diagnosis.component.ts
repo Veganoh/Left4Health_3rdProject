@@ -25,7 +25,6 @@ export class DermaDiagnosisComponent {
       this.handleImageDiagnosis();
     } else if (this.inputType === 'Text and Image') {
       this.handleTextDiagnosis();
-      this.handleImageDiagnosis();
     }
   }
 
@@ -39,9 +38,9 @@ export class DermaDiagnosisComponent {
   }
 
   handleImageDiagnosis() {
-    if (this.image && (this.image.type == 'image/png' || this.image.type == 'image/jpg')) {
+    if (this.image && (this.image.type == 'image/png' || this.image.type == 'image/jpg' || this.image.type == 'image/jpeg')) {
       const formData = new FormData();
-      formData.append('image', this.image, 'disease.png');
+      formData.append('image', this.image, 'disease.jpg');
       this.dermaDiagnosisService.getImageDiagnosis(formData).subscribe((response) => {
         if (response && response.diagnosis) {
           this.disease_intent = response.diagnosis;

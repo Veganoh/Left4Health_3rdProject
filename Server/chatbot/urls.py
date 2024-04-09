@@ -19,12 +19,12 @@ from django.urls import include, path
 from .views import chatbot_message_intent
 from .views import evaluate_haystack_results
 from .views import text_diagnosis
-
+from .views import image_diagnosis
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('chatbot/intents/<str:model_type>', chatbot_message_intent, name='chatbot_intents'),
     path('chatbot/generate_test_results',evaluate_haystack_results, name='evaluate_haystack_results'),
     path('api/diagnosis/text', text_diagnosis, name='text_diagnosis'),
-    path('api/diagnosis/image', text_diagnosis, name='image_diagnosis'),
+    path('api/diagnosis/image', image_diagnosis, name='image_diagnosis'),
 
 ]
