@@ -116,6 +116,8 @@ try:
     model = tf.keras.models.load_model(my_fine_tuned_bert)
 except IOError:
     print("Oops!  That was no model trained. Train the model first!..")
+except ValueError:
+    print("Oops!  That was no model trained. Train the model first!..")
 
 def predict_intent_bert_intents(input_sentence):
     # Load the fine-tuned BERT model

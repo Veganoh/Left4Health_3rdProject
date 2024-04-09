@@ -87,10 +87,7 @@ requestInterceptor:RequestInterceptor = (details) => {
   return details
 }
 
-
   clearInputs() {
     this.text = '';
-    this.image = new File([], '');
   }
-
 }
