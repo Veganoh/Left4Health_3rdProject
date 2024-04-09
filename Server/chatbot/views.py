@@ -125,6 +125,26 @@ def text_diagnosis(request):
     return JsonResponse({'error': 'Invalid request method'})
 
 @csrf_exempt
+def image_diagnosis(request):
+    if request.method == 'POST':
+        if 'image' not in request.FILES:
+            return JsonResponse({'error': 'No file part'}, status=400)
+
+        file = request.FILES['image']
+
+        if file.name == '':
+            return JsonResponse({'error': 'No selected file'}, status=400)
+
+        if file:
+            filename = file.name
+            file.save(filename)
+            #disease = runModel(filename)
+            return JsonResponse({'diagnosis': 'yes'})
+        return JsonResponse({'error': 'Invalid file format'}, status=400)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+@csrf_exempt
 def get_response_intent(request, model_type):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))

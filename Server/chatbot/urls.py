@@ -25,5 +25,6 @@ urlpatterns = [
     path('chatbot/intents/<str:model_type>', chatbot_message_intent, name='chatbot_intents'),
     path('chatbot/generate_test_results',evaluate_haystack_results, name='evaluate_haystack_results'),
     path('api/diagnosis/text', text_diagnosis, name='text_diagnosis'),
+    path('api/diagnosis/image', text_diagnosis, name='image_diagnosis'),
 
 ]
