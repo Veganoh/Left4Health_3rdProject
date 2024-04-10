@@ -19,7 +19,7 @@ from .models.conversation.models.roberta.Tester import get_analytics_queries
 from nltk.corpus import words
 from nltk.tokenize import word_tokenize
 from diagnosis.pre_processing import runModel
-from werkzeug.utils import secure_filename
+from diagnosis.image_processor import predictImage
 
 import os
 
@@ -84,10 +84,10 @@ def chatbot_message_intent(request, model_type):
                 print(answer)
 
                 # in case score is bad we think it is not correct, or we dont know, we ask GPT
-                if answer.score < 0.6:
+                if answer.score < 0.1:
                     # Return "Disease not detected" as the answer
-                    answer = generate_response_haystack_llm(query, disease_intent)
-                    return JsonResponse({"role": "ai", "text": answer})
+                    #answer = generate_response_haystack_llm(query, disease_intent)
+                    return JsonResponse({"role": "ai", "text": "I am sorry but I did not get a good enough response for your query, can you please reformulate"})
                 if 'OOS' in answer.meta['abstract']:
                     return JsonResponse({"role": "ai", "text": "I am sorry but I am trained to answer about skin diseases only"})
 
@@ -153,6 +153,7 @@ def image_diagnosis(request):
             with open(filepath, 'wb') as f:
                 for chunk in file.chunks():
                     f.write(chunk)
+
             return JsonResponse({'diagnosis': 'yes'})
 
         return JsonResponse({'error': 'Invalid file format'}, status=400)

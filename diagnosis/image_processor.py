@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow as tf
 import keras
 import os
-#import tf.keras.models.load_model as load_model
+import tf.keras.models.load_model as load_model
 
 def pre_processing_image( filepath):
 
@@ -51,17 +51,17 @@ def verify_output_type(output):
 #def process_result():
 
 
-def runModel(filepath):
+def predictImage(filepath):
     try:
         processed_image = pre_processing_image(filepath)
 
-        #model_path = '../ClassificationOfSkinDiseases/Models_to_Pred/CNN_model'
-        model_path = '../ClassificationOfSkinDiseases/Models_to_Pred/CNN_randomsearch.h5'
+        model_path = '../ClassificationOfSkinDiseases/Models_to_Pred/CNN_model'
+        #model_path = '../ClassificationOfSkinDiseases/Models_to_Pred/CNN_randomsearch.h5'
         if not os.path.exists(model_path):
             error_msg = f"No file or directory found at {model_path}"
             raise IOError(error_msg)
         
-        model = keras.models.load_model(model_path)
+        model = tf.keras.models.load_model(model_path)
         prediction = model.predict(processed_image)
         prediction = verify_output_type(prediction)
         prediction_format = format_probabilities(prediction)
@@ -72,4 +72,9 @@ def runModel(filepath):
     except Exception as e:
         print("Unexpected error:", e)
         return {"error": "Internal Server Error"}, 500
+
+
+if __name__ == "__main__":
+
+    predictImage()
 
