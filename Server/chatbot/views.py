@@ -24,6 +24,8 @@ from werkzeug.utils import secure_filename
 
 import os
 
+from ..diagnosis.image_processor import runImageModel
+
 nltk.download('words')
 
 valid_diseases = ['melanoma', 'dermatitis', 'psoriasis', 'urticaria', 'lupus']
@@ -85,10 +87,10 @@ def chatbot_message_intent(request, model_type):
                 print(answer)
 
                 # in case score is bad we think it is not correct, or we dont know, we ask GPT
-                if answer.score < 0.6:
+                if answer.score < 0.1:
                     # Return "Disease not detected" as the answer
-                    answer = generate_response_haystack_llm(query, disease_intent)
-                    return JsonResponse({"role": "ai", "text": answer})
+                    #answer = generate_response_haystack_llm(query, disease_intent)
+                    return JsonResponse({"role": "ai", "text": "I am sorry but I did not get a good enough response for your query, can you please reformulate"})
                 if 'OOS' in answer.meta['abstract']:
                     return JsonResponse({"role": "ai", "text": "I am sorry but I am trained to answer about skin diseases only"})
 
@@ -154,8 +156,9 @@ def image_diagnosis(request):
             with open(filepath, 'wb') as f:
                 for chunk in file.chunks():
                     f.write(chunk)
-            disease = runModel(filepath)
-            return JsonResponse({'diagnosis': disease})
+            label = runImageModel(filepath)
+            return JsonResponse({'diagnosis': label})
+
 
         return JsonResponse({'error': 'Invalid file format'}, status=400)
     return JsonResponse({'error': 'Invalid request method'}, status=400)
