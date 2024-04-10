@@ -7,7 +7,7 @@ import tensorflow as tf
 current_dir = os.path.dirname(os.path.abspath(__file__))
 # Navigate two levels up
 model_path = os.path.abspath(
-    os.path.join(current_dir, '..', '..', 'ClassificationOfSkinDiseases/Models_to_Pred/CNN_model'))
+    os.path.join(current_dir, '../..', '..', 'ClassificationOfSkinDiseases/Models_to_Pred/CNN_model'))
 # model_path = '../ClassificationOfSkinDiseases/Models_to_Pred/CNN_model'
 # model_path = '../ClassificationOfSkinDiseases/Models_to_Pred/CNN_randomsearch.h5'
 if not os.path.exists(model_path):
@@ -86,8 +86,8 @@ def runImageModel(filepath):
         class_labels = np.argmax(prediction, axis=1)
         label = map_disease(class_labels[0])
         # Print or use the class labels as needed
-        print("Predicted class labels:", class_labels)
-        return ({'diagnosis': class_labels})
+        print("Predicted class labels:", label)
+        return label
     except IOError as e:
         print("Error loading model:", e)
         return {"error": str(e)}, 500
@@ -102,5 +102,5 @@ if __name__ == "__main__":
     current_dir = os.path.dirname(os.path.abspath(__file__))
     # Navigate two levels up
     filepath = os.path.abspath(
-        os.path.join(current_dir, '..', '..', 'diagnosis/Uploads/08lichenPlanusTongue1122052.jpg'))
+        os.path.join(current_dir, '../..', '..', 'diagnosis/Uploads/08lichenPlanusTongue1122052.jpg'))
     runImageModel(filepath)

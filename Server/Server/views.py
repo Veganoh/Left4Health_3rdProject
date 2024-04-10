@@ -2,29 +2,24 @@ import nltk
 from django.http import JsonResponse, HttpResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
-from .models.intent_classification.svc.chatloader import generate_intent_svc, generate_response
-from .models.conversation.models.lstm.trainbot import train
-from .models.intent_classification.svc.trainbot_intent_svc import train_model_intent
-from .models.intent_classification.lstm.trainbot_intent_lstm import train_model_intent_lstm
-from .models.intent_classification.lstm.chatloader_intent_lstm import predict_intent_lstm
-from .models.intent_classification.bilstm.chatbot_intent_bilstm_pos import train_intent_bilstm_pos
-from .models.intent_classification.bilstm.chatbot_intent_bilstm_pos import predict_intent_bilstm_pos
-from .models.intent_classification.bert.chatbot_intent_bert import predict_intent_bert
-from .models.intent_classification.bert.chatbot_intent_bert_intents import predict_intent_bert_intents
-from .models.conversation.models.llm.chatgpt import generate_answer_with_intent
-from .models.conversation.models.llm.chatgpt import generate_answer_without_intent
-from .models.conversation.models.roberta.HaystackQuestionAnserting import generate_response_haystack
-from .models.conversation.models.roberta.HaystackQuestionAnserting import generate_response_haystack_llm
-from .models.conversation.models.roberta.Tester import get_analytics_queries
+from .chatbot.models.intent_classification.svc.chatloader import generate_intent_svc
+from .chatbot.models.intent_classification.lstm.chatloader_intent_lstm import predict_intent_lstm
+from .chatbot.models.intent_classification.bilstm.chatbot_intent_bilstm_pos import predict_intent_bilstm_pos
+from .chatbot.models.intent_classification.bert.chatbot_intent_bert import predict_intent_bert
+from .chatbot.models.intent_classification.bert.chatbot_intent_bert_intents import predict_intent_bert_intents
+from .chatbot.models.conversation.models.llm.chatgpt import generate_answer_with_intent
+from .chatbot.models.conversation.models.llm.chatgpt import generate_answer_without_intent
+from .chatbot.models.conversation.models.roberta.HaystackQuestionAnserting import generate_response_haystack
+from .chatbot.models.conversation.models.roberta.HaystackQuestionAnserting import generate_response_haystack_llm
+from .chatbot.models.conversation.models.roberta.Tester import get_analytics_queries
+from .diagnosis.image_processor import runImageModel
+from .diagnosis.pre_processing import runModel
 from nltk.corpus import words
 from nltk.tokenize import word_tokenize
-from diagnosis.pre_processing import runModel
-from diagnosis.image_processor import runImageModel
-from werkzeug.utils import secure_filename
 
 import os
 
-from ..diagnosis.image_processor import runImageModel
+
 
 nltk.download('words')
 
@@ -34,9 +29,51 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 two_levels_up = os.path.abspath(os.path.join(current_dir, '..'))
 image_file_path = os.path.join(two_levels_up, 'diagnosis')
 
+
+
+@csrf_exempt
+def image_diagnosis(request):
+    if request.method == 'POST':
+        if 'image' not in request.FILES:
+
+            return JsonResponse({'error': 'No file part'}, status=400)
+
+        file = request.FILES['image']
+
+        if file.name == '':
+
+            return JsonResponse({'error': 'No selected file'}, status=400)
+
+        if file:
+            filename = file.name
+            if not os.path.exists(image_file_path):
+                os.makedirs(image_file_path)
+            filepath = os.path.join(image_file_path, filename)
+            with open(filepath, 'wb') as f:
+                for chunk in file.chunks():
+                    f.write(chunk)
+            label = runImageModel(filepath)
+            return JsonResponse({'diagnosis': label})
+
+
+        return JsonResponse({'error': 'Invalid file format'}, status=400)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+
+@csrf_exempt
+def text_diagnosis(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        user_input = data['User_input']
+        disease = runModel(user_input)
+        return JsonResponse({'diagnosis': disease})
+    return JsonResponse({'error': 'Invalid request method'})
+
+
 @csrf_exempt
 def chatbot_message_intent(request, model_type):
-    # this rest api service is called from chatbot
+    # this rest api service is called from Server
     # depending on parameter one of the models will be used
     # after many tests at the moment llm is the most prolific followd by haystack
     # haystack hybrid retrieval colab can be found
@@ -124,44 +161,6 @@ def chatbot_message_intent(request, model_type):
         response = HttpResponse()
         response['allow'] = 'post'
         return response
-
-@csrf_exempt
-def text_diagnosis(request):
-    if request.method == 'POST':
-        data = json.loads(request.body.decode('utf-8'))
-        user_input = data['User_input']
-        disease = runModel(user_input)
-        return JsonResponse({'diagnosis': disease})
-    return JsonResponse({'error': 'Invalid request method'})
-
-
-@csrf_exempt
-def image_diagnosis(request):
-    if request.method == 'POST':
-        if 'image' not in request.FILES:
-
-            return JsonResponse({'error': 'No file part'}, status=400)
-
-        file = request.FILES['image']
-
-        if file.name == '':
-
-            return JsonResponse({'error': 'No selected file'}, status=400)
-
-        if file:
-            filename = file.name
-            if not os.path.exists(image_file_path):
-                os.makedirs(image_file_path)
-            filepath = os.path.join(image_file_path, filename)
-            with open(filepath, 'wb') as f:
-                for chunk in file.chunks():
-                    f.write(chunk)
-            label = runImageModel(filepath)
-            return JsonResponse({'diagnosis': label})
-
-
-        return JsonResponse({'error': 'Invalid file format'}, status=400)
-    return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 
 @csrf_exempt

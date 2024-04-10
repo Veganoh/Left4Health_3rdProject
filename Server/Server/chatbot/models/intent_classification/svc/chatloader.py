@@ -27,7 +27,7 @@ reverse_target_char_index = {index: char for char, index in target_token_index.i
 with open(tokenizer_preprocessed, 'rb') as f:
     input_token_index, target_token_index = pickle.load(f)
 
-# Load the pre-trained chatbot model
+# Load the pre-trained Server model
 model = None
 
 
