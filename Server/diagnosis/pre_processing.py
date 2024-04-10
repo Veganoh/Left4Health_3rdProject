@@ -10,8 +10,9 @@ nltk.download('stopwords')
 
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-model_path = os.path.join(current_dir,'models/LR_stem_tfidf.pkl')
-vectorizer_path = os.path.join(current_dir,'vectorizer')
+model_path = os.path.join(current_dir, 'models/model_text.pkl')
+vectorizer_path = os.path.join(current_dir, 'vectorizer')
+
 
 def pre_processing(data):
     stop_words = set(stopwords.words('english'))

@@ -19,6 +19,9 @@ from .models.conversation.models.roberta.Tester import get_analytics_queries
 from nltk.corpus import words
 from nltk.tokenize import word_tokenize
 from diagnosis.pre_processing import runModel
+from diagnosis.image_processor import runImageModel
+from werkzeug.utils import secure_filename
+
 import os
 
 from ..diagnosis.image_processor import runImageModel
@@ -155,6 +158,7 @@ def image_diagnosis(request):
                     f.write(chunk)
             label = runImageModel(filepath)
             return JsonResponse({'diagnosis': label})
+
 
         return JsonResponse({'error': 'Invalid file format'}, status=400)
     return JsonResponse({'error': 'Invalid request method'}, status=400)
