@@ -1,5 +1,5 @@
 """
-URL configuration for chatbot project.
+URL configuration for Server project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
@@ -15,11 +15,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import path
 from .views import chatbot_message_intent
 from .views import evaluate_haystack_results
 from .views import text_diagnosis
 from .views import image_diagnosis
+
+
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('chatbot/intents/<str:model_type>', chatbot_message_intent, name='chatbot_intents'),

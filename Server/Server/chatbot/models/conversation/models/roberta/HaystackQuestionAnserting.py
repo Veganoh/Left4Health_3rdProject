@@ -109,7 +109,7 @@ def generate_response_haystack(query, intent):
 
 template = """
 Given the following information, answer the question. 
-Very important this is a skin disease chatbot, only for the following
+Very important this is a skin disease Server, only for the following
 [psoriasis, dermatitis, lupus, melanoma, urticaria] ONLY.
 Sometimes the question starts with the skin disease intent
 For example: (Psoriasis) What are the disease symptoms?
