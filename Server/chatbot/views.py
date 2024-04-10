@@ -19,7 +19,7 @@ from .models.conversation.models.roberta.Tester import get_analytics_queries
 from nltk.corpus import words
 from nltk.tokenize import word_tokenize
 from diagnosis.pre_processing import runModel
-from diagnosis.image_processor import predictImage
+from diagnosis.image_processor import runModelImage
 
 import os
 
