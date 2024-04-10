@@ -65,7 +65,12 @@ def predictImage(filepath):
         prediction = model.predict(processed_image)
         prediction = verify_output_type(prediction)
         prediction_format = format_probabilities(prediction)
-        return ({'diagnosis': prediction_format})
+        # Extract the class labels
+        class_labels = np.argmax(prediction, axis=1)
+
+        # Print or use the class labels as needed
+        print("Predicted class labels:", class_labels)
+        return ({'diagnosis': class_labels})
     except IOError as e:
         print("Error loading model:", e)
         return {"error": str(e)}, 500
