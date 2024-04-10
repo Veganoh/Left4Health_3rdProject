@@ -25,6 +25,7 @@ export class DermaDiagnosisComponent {
       this.handleImageDiagnosis();
     } else if (this.inputType === 'Text and Image') {
       this.handleTextDiagnosis();
+      this.handleImageDiagnosis();
     }
   }
 
