@@ -1,45 +1,71 @@
-
 import cv2
-#from keras.models import load_model
 import numpy as np
+import keras
+import os
 
-def pre_processing_image( filepath):
+current_dir = os.path.dirname(os.path.abspath(__file__))
+model_path = os.path.join(current_dir, 'models/model_image.h5')
 
+
+def pre_processing_image(filepath):
     image = cv2.imread(filepath)
 
     if image is None:
-        raise ValueError("Erro ao ler a imagem")
+        raise ValueError("Error reading the image")
 
-    # Redimensiona a imagem
-    img_redimensionada = cv2.resize(image, (250, 250))
+    img_resized = cv2.resize(image, (250, 250))
 
-    # Split the BGR image into separate channels
-    b, g, r = cv2.split(img_redimensionada)
+    b, g, r = cv2.split(img_resized)
 
-    # Apply CLAHE to each channel separately
     clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8, 8))
     b_clahe = clahe.apply(b)
     g_clahe = clahe.apply(g)
     r_clahe = clahe.apply(r)
 
-    # Merge the CLAHE-enhanced channels back into a BGR image
     normalized = cv2.merge((b_clahe, g_clahe, r_clahe))
 
-    # Salva a imagem pré-processada
     processed_image_path = 'processed_' + filepath
     cv2.imwrite(processed_image_path, normalized)
 
-    return image
+    processed_image = normalized[np.newaxis, ...]
+    print("Image processed")
+
+    return processed_image
 
 
-#model = load_model('../ClassificationOfSkinDiseases/CNN_randomsearch/CNN_randomsearch.h5')
+def format_probabilities(probabilities):
+    formatted_probabilities = []
+    for prob in probabilities:
+        for p in prob:
+            percentage = p * 100
+            print(f"Original: {p}, Novo: {percentage:.2f}%")
+            formatted_probabilities.append(percentage)
+
+    return formatted_probabilities
 
 
-def runModel(filepath):
-    processed_image = pre_processing_image(filepath)
-    processed_image = np.expand_dims(processed_image, axis=0)
-    prediction = model.predict(processed_image)
-    print(prediction)
-    disease = prediction
-    return disease
+def verify_output_type(output):
+    if isinstance(output, np.ndarray):
+        output = output.tolist()
+        print("Prediction in numpy treated")
+    return output
 
+
+def runImageModel(filepath):
+    try:
+        processed_image = pre_processing_image(filepath)
+        if not os.path.exists(model_path):
+            error_msg = f"No file or directory found at {model_path}"
+            raise IOError(error_msg)
+
+        model = keras.models.load_model(model_path)
+        prediction = model.predict(processed_image)
+        prediction = verify_output_type(prediction)
+        prediction_format = format_probabilities(prediction)
+        return {'diagnosis': prediction_format}
+    except IOError as e:
+        print("Error loading model:", e)
+        return {"error": str(e)}, 500
+    except Exception as e:
+        print("Unexpected error:", e)
+        return {"error": "Internal Server Error"}, 500
