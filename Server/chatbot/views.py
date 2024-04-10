@@ -19,10 +19,17 @@ from .models.conversation.models.roberta.Tester import get_analytics_queries
 from nltk.corpus import words
 from nltk.tokenize import word_tokenize
 from diagnosis.pre_processing import runModel
+from werkzeug.utils import secure_filename
+
+import os
 
 nltk.download('words')
 
 valid_diseases = ['melanoma', 'dermatitis', 'psoriasis', 'urticaria', 'lupus']
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+two_levels_up = os.path.abspath(os.path.join(current_dir, '..'))
+image_file_path = os.path.join(two_levels_up, 'diagnosis')
 
 @csrf_exempt
 def chatbot_message_intent(request, model_type):
@@ -123,6 +130,34 @@ def text_diagnosis(request):
         disease = runModel(user_input)
         return JsonResponse({'diagnosis': disease})
     return JsonResponse({'error': 'Invalid request method'})
+
+
+@csrf_exempt
+def image_diagnosis(request):
+    if request.method == 'POST':
+        if 'image' not in request.FILES:
+
+            return JsonResponse({'error': 'No file part'}, status=400)
+
+        file = request.FILES['image']
+
+        if file.name == '':
+
+            return JsonResponse({'error': 'No selected file'}, status=400)
+
+        if file:
+            filename = file.name
+            if not os.path.exists(image_file_path):
+                os.makedirs(image_file_path)
+            filepath = os.path.join(image_file_path, filename)
+            with open(filepath, 'wb') as f:
+                for chunk in file.chunks():
+                    f.write(chunk)
+            return JsonResponse({'diagnosis': 'yes'})
+
+        return JsonResponse({'error': 'Invalid file format'}, status=400)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
 
 @csrf_exempt
 def get_response_intent(request, model_type):

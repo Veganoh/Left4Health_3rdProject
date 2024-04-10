@@ -51,7 +51,6 @@ def tf_lemmatization(data):
 
 model = joblib.load('Models/LR/LR_stem_tfidf.pkl')
 
-
 def runModel(user_input):
     data = pd.DataFrame({'User_input': [user_input]})
     processed_data = tf_stemming(data)

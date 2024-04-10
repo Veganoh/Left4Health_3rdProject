@@ -58,6 +58,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:63342",
     "http://localhost:63343",
     "http://127.0.0.1:63343",
+    "http://localhost:4200",
+    "http://127.0.0.1:4200",
 ]
 
 ROOT_URLCONF = "chatbot.urls"
