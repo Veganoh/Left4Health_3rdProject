@@ -1,9 +1,13 @@
 import re
 from nltk.corpus import stopwords
-import nltk
 import joblib
 import pandas as pd
 import os
+import nltk
+
+
+nltk.download('stopwords')
+
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 model_path = os.path.join(current_dir, 'models/model_text.pkl')
