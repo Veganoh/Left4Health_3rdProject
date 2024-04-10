@@ -1,5 +1,6 @@
 import pre_processing
 import image_processor 
+import numpy as np
 from flask import Flask, jsonify, request
 from werkzeug.utils import secure_filename
 import os
@@ -60,9 +61,8 @@ def diagnosis_image():
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
 
-        # Chamar o método process_image() da classe ImageProcessor
-        result = image_processor.process_image(filepath)
-        response = jsonify({'diagnosis': result})
+        prediction = image_processor.runModel(filepath)
+        response = jsonify(prediction)
     else:
         response = jsonify({'error': 'Invalid file format'})
 
