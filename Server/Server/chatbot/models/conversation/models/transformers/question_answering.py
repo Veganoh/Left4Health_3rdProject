@@ -16,9 +16,7 @@ import pandas as pd
 from haystack.components.builders import PromptBuilder
 from haystack.components.generators import OpenAIGenerator
 
-if "OPENAI_API_KEY" not in os.environ:
-    os.environ["OPENAI_API_KEY"] = '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'
-generator = OpenAIGenerator(model="gpt-3.5-turbo")
+
 
 
 def load_pickle(pickle_file):
@@ -51,6 +49,10 @@ if document_store is None:
     document_store = InMemoryDocumentStore()
 
     document_splitter = DocumentSplitter(split_by="word", split_length=512, split_overlap=32)
+    # Using pre trained embedding model bge-small-en-v1.5
+    # General embedding model https://github.com/FlagOpen/FlagEmbedding BGE Embedding
+    # Pre trained using retroMAE, trained on wikipedia and book corpus
+    # used with Huggingface sentence transformers
     document_embedder = SentenceTransformersDocumentEmbedder(
         model="BAAI/bge-small-en-v1.5", device=ComponentDevice.from_str("cpu")
     )
@@ -68,16 +70,37 @@ if document_store is None:
     with open(document_store_file, 'wb') as f:
         pickle.dump(document_store, f)
 
-
+# uses transformers to embbedd the query string to find the matches
 #not using gpu because mac has issues with it
 text_embedder = SentenceTransformersTextEmbedder(
     model="BAAI/bge-small-en-v1.5", device=ComponentDevice.from_str("cpu")
 )
+
+# retrieves based on vector similarity
 embedding_retriever = InMemoryEmbeddingRetriever(document_store)
+
+# this is a BM25 algorithm implementation, works by calculating a relevance score for each document in the collection
+# concerning a specific query. The algorithm considers the frequency of query terms in the document,
+# the length of the document, and the average document length in the entire collection.
 bm25_retriever = InMemoryBM25Retriever(document_store)
 
-
+# cross encoder model BGE Reranker from https://github.com/FlagOpen/FlagEmbedding
+# Cross-encoder will perform full-attention over the input pair, which is more accurate than embedding model
+# but more time-consuming than embedding model. Therefore, it can be used to re-rank the top-k documents
+# returned by embedding model
+# used together with Huggingface similarity transformer
 ranker = TransformersSimilarityRanker(model="BAAI/bge-reranker-base")
+
+
+# joins all the results into one
+
+
+#    A component that joins multiple list of Documents into a single list.
+#    It supports different joins modes:
+#    - concatenate: Keeps the highest scored Document in case of duplicates.
+#    - merge: Merge a calculate a weighted sum of the scores of duplicate Documents.
+#    - reciprocal_rank_fusion: Merge and assign scores based on reciprocal rank fusion.
+#  We are using concatenate
 
 document_joiner = DocumentJoiner()
 
@@ -105,7 +128,7 @@ def generate_response_haystack(query, intent):
 
 
 ###########  in case there is no acceptable answer in document store we use the generative model
-
+########### not in use
 
 template = """
 Given the following information, answer the question. 
@@ -123,6 +146,10 @@ Context:
 Question: {{question}}
 Answer:
 """
+
+if "OPENAI_API_KEY" not in os.environ:
+    os.environ["OPENAI_API_KEY"] = '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'
+generator = OpenAIGenerator(model="gpt-3.5-turbo")
 
 prompt_builder = PromptBuilder(template=template)
 #not using gpu because mac has issues with it

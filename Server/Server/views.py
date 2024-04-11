@@ -9,14 +9,14 @@ from .chatbot.models.intent_classification.bert.chatbot_intent_bert import predi
 from .chatbot.models.intent_classification.bert.chatbot_intent_bert_intents import predict_intent_bert_intents
 from .chatbot.models.conversation.models.llm.chatgpt import generate_answer_with_intent
 from .chatbot.models.conversation.models.llm.chatgpt import generate_answer_without_intent
-from .chatbot.models.conversation.models.roberta.HaystackQuestionAnserting import generate_response_haystack
-from .chatbot.models.conversation.models.roberta.HaystackQuestionAnserting import generate_response_haystack_llm
-from .chatbot.models.conversation.models.roberta.Tester import get_analytics_queries
+from .chatbot.models.conversation.models.transformers.question_answering import generate_response_haystack
+from .chatbot.models.conversation.models.transformers.question_answering import generate_response_haystack_llm
+from .chatbot.models.conversation.models.transformers.Tester import get_analytics_queries
 from .diagnosis.image_processor import runImageModel
 from .diagnosis.pre_processing import runModel
 from nltk.corpus import words
 from nltk.tokenize import word_tokenize
-
+import time
 import os
 
 
