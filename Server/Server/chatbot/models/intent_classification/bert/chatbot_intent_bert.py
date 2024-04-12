@@ -12,19 +12,25 @@ import nltk
 current_dir = os.path.dirname(os.path.abspath(__file__))
 # Navigate two levels up
 two_levels_up = os.path.abspath(os.path.join(current_dir, '..', '..'))
-dataset_file_path = os.path.join(two_levels_up, 'dataset_full.csv')
+dataset_file_path = os.path.join(two_levels_up, 'dataset_with_intents.csv')
 # Load the dataset
 df = pd.read_csv(dataset_file_path)
+# Drop rows with missing values in any column
+df.dropna(inplace=True)
+
+# Drop duplicate rows
+df.drop_duplicates(inplace=True)
 # Preprocess the dataset
 # Assume 'Question' column for the input and 'Disease' column for the intent labels
 questions = df['Question'].tolist()
 answers = df['Answer'].tolist()  # If you want to include answers in the model
-diseases = df['Disease'].tolist()
+df['target'] = df['Disease'] + " - " + df['Intent']
+disease_intents = df['target'].tolist()
 # Combine questions and answers into a single text input
 combined_texts = [question + " [SEP] " + answer for question, answer in zip(questions, answers)]
 # Encode the labels
 label_encoder = LabelEncoder()
-labels = label_encoder.fit_transform(diseases)
+labels = label_encoder.fit_transform(disease_intents)
 # Initialize the tokenizer
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
