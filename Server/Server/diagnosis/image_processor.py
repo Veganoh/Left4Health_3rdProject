@@ -1,20 +1,15 @@
 import cv2
 import numpy as np
-import keras
 import os
 import tensorflow as tf
+import json
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-# Navigate two levels up
-model_path = os.path.abspath(
-    os.path.join(current_dir, '../..', '..', 'ClassificationOfSkinDiseases/Models_to_Pred/CNN_model'))
-# model_path = '../ClassificationOfSkinDiseases/Models_to_Pred/CNN_model'
-# model_path = '../ClassificationOfSkinDiseases/Models_to_Pred/CNN_randomsearch.h5'
+model_path = os.path.join(current_dir, 'models/model_image')
+
 if not os.path.exists(model_path):
     error_msg = f"No file or directory found at {model_path}"
     raise IOError(error_msg)
-
-
 
 
 def pre_processing_image(filepath):
@@ -44,12 +39,18 @@ def pre_processing_image(filepath):
 
 
 def format_probabilities(probabilities):
-    formatted_probabilities = []
-    for prob in probabilities:
-        for p in prob:
-            percentage = p * 100
-            print(f"Original: {p}, Novo: {percentage:.2f}%")
-            formatted_probabilities.append(percentage)
+    diseases = {
+        0: "Urticaria",
+        1: "Psoriasis",
+        2: "Lupus",
+        3: "Dermatitis",
+        4: "Melanoma"
+    }
+
+    formatted_probabilities = {"diagnosis": {}}
+    for i, prob in enumerate(probabilities[0]):
+        disease_name = diseases[i]
+        formatted_probabilities["diagnosis"][disease_name] = f"{prob * 100:.2f}"
 
     return formatted_probabilities
 
@@ -60,16 +61,6 @@ def verify_output_type(output):
         print("Prediction in numpy treated")
     return output
 
-
-def map_disease(number):
-    disease_mapping = {
-        0: "URTICARIA",
-        1: "PSORIASIS",
-        2: "LUPUS",
-        3: "DERMATITIS",
-        4: "MELANOMA"
-    }
-    return disease_mapping.get(number, "Invalid number")  # Returns "Invalid number" if the number is not in the mapping
 
 def runImageModel(filepath):
     try:
@@ -82,12 +73,7 @@ def runImageModel(filepath):
         prediction = model.predict(processed_image)
         prediction = verify_output_type(prediction)
         prediction_format = format_probabilities(prediction)
-        # Extract the class labels
-        class_labels = np.argmax(prediction, axis=1)
-        label = map_disease(class_labels[0])
-        # Print or use the class labels as needed
-        print("Predicted class labels:", label)
-        return label
+        return prediction_format
     except IOError as e:
         print("Error loading model:", e)
         return {"error": str(e)}, 500
@@ -96,11 +82,4 @@ def runImageModel(filepath):
         return {"error": "Internal Server Error"}, 500
 
 
-
-if __name__ == "__main__":
-    # Get the current directory of the script
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    # Navigate two levels up
-    filepath = os.path.abspath(
-        os.path.join(current_dir, '../..', '..', 'diagnosis/Uploads/08lichenPlanusTongue1122052.jpg'))
-    runImageModel(filepath)
+model = tf.keras.models.load_model(model_path)

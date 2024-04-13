@@ -58,7 +58,7 @@ def tf_lemmatization(data):
     return tf.transform(data['User_input_preprocessed_lem'].apply(' '.join))
 
 
-#model = joblib.load(model_path)
+model = joblib.load(model_path)
 
 
 def runModel(user_input):
@@ -68,11 +68,3 @@ def runModel(user_input):
     disease = prediction[0]
     return disease
 
-
-import keras
-current_dir = os.path.dirname(os.path.abspath(__file__))
-model_path = os.path.join(current_dir, 'models\model_text.keras')
-print(os.path.isfile(model_path))
-
-
-model = keras.models.load_model(model_path)
