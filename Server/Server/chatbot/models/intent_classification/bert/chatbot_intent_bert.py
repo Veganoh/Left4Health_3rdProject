@@ -1,4 +1,7 @@
+import numpy as np
 import pandas as pd
+from sklearn.metrics import confusion_matrix, classification_report, accuracy_score, f1_score
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from transformers import BertTokenizer, TFBertForSequenceClassification, glue_convert_examples_to_features
 from transformers import InputExample
@@ -7,6 +10,8 @@ import os
 import pickle
 import nltk
 
+# Initialize the tokenizer
+tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
 # Get the current directory of the script
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -24,25 +29,17 @@ df.drop_duplicates(inplace=True)
 # Assume 'Question' column for the input and 'Disease' column for the intent labels
 questions = df['Question'].tolist()
 answers = df['Answer'].tolist()  # If you want to include answers in the model
-df['target'] = df['Disease'] + " - " + df['Intent']
-disease_intents = df['target'].tolist()
+disease_intents = df['Intent'].tolist()
 # Combine questions and answers into a single text input
 combined_texts = [question + " [SEP] " + answer for question, answer in zip(questions, answers)]
 # Encode the labels
 label_encoder = LabelEncoder()
 labels = label_encoder.fit_transform(disease_intents)
-# Initialize the tokenizer
-tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
-
-# Create a TensorFlow dataset
-def create_tf_dataset(input_ids, attention_masks, labels, batch_size=32):
-    dataset = tf.data.Dataset.from_tensor_slices(({
-                                                      'input_ids': input_ids,
-                                                      'attention_mask': attention_masks
-                                                  }, labels))
-    dataset = dataset.shuffle(len(input_ids)).batch(batch_size)
-    return dataset
+# Split the dataset into training and testing sets
+train_texts, test_texts, train_labels, test_labels = train_test_split(
+    combined_texts, labels, test_size=0.2, random_state=42
+)
 
 
 # Tokenize and encode sentences in BERT's format
@@ -72,6 +69,29 @@ def encode_sentences(sentences, max_length=128):
     return input_ids, attention_masks
 
 
+# Tokenize and encode sentences for training and testing sets
+train_input_ids, train_attention_masks = encode_sentences(train_texts)
+test_input_ids, test_attention_masks = encode_sentences(test_texts)
+
+# Convert labels to tensorflow tensors
+train_labels = tf.convert_to_tensor(train_labels)
+test_labels = tf.convert_to_tensor(test_labels)
+
+
+# Create a TensorFlow dataset
+def create_tf_dataset(input_ids, attention_masks, labels, batch_size=32):
+    dataset = tf.data.Dataset.from_tensor_slices(({
+                                                      'input_ids': input_ids,
+                                                      'attention_mask': attention_masks
+                                                  }, labels))
+    dataset = dataset.shuffle(len(input_ids)).batch(batch_size)
+    return dataset
+
+
+# Create the TensorFlow datasets
+train_dataset = create_tf_dataset(train_input_ids, train_attention_masks, train_labels)
+test_dataset = create_tf_dataset(test_input_ids, test_attention_masks, test_labels)
+
 def train_intent_bart():
     global labels
     input_ids, attention_masks = encode_sentences(combined_texts)
@@ -89,7 +109,7 @@ def train_intent_bart():
     model.compile(optimizer=optimizer, loss=loss, metrics=['accuracy'])
 
     # Train the model
-    model.fit(dataset, epochs=4)
+    model.fit(dataset, epochs=5)
     # Save the fine-tuned model and the label encoder for later use
     label_encoder_path = os.path.join(current_dir, 'model/label_encoder.pkl')
     my_fine_tuned_bert = os.path.join(current_dir, 'model/my_fine_tuned_bert')
@@ -98,43 +118,33 @@ def train_intent_bart():
     with open(label_encoder_path, 'wb') as le_file:
         pickle.dump(label_encoder, le_file)
 
+    try :
+        # Evaluate the model on the test set
+        result = model.evaluate(test_dataset)
+        print(f"Test Loss: {result[0]}, Test Accuracy: {result[1]}")
 
-def predict_intent_bert(text_query):
-    # Load the fine-tuned BERT model
-    # Load the trained model
-    my_fine_tuned_bert = os.path.join(current_dir, 'model/my_fine_tuned_bert')
-    model = TFBertForSequenceClassification.from_pretrained(my_fine_tuned_bert)
+        # Get predictions for the test set
+        predictions = model.predict(test_dataset)
+        predicted_labels = np.argmax(predictions.logits, axis=1)
 
-    # Preprocess the text query
-    encoded_dict = tokenizer.encode_plus(
-        text_query,  # Input text
-        add_special_tokens=True,  # Add '[CLS]' and '[SEP]'
-        max_length=64,  # Pad & truncate all sentences.
-        pad_to_max_length=True,
-        return_attention_mask=True,  # Construct attention masks.
-        return_tensors='tf',  # Return TensorFlow tensors.
-    )
+        # Calculate the confusion matrix
+        conf_matrix = confusion_matrix(test_labels, predicted_labels)
+        print(conf_matrix)
 
-    # Extract input IDs and attention masks from the encoded representation
-    input_ids = encoded_dict['input_ids']
-    attention_mask = encoded_dict['attention_mask']
+        # Calculate the classification report for each class
+        class_report = classification_report(test_labels, predicted_labels, target_names=label_encoder.classes_)
+        print(class_report)
 
-    # Make a prediction
-    predictions = model(input_ids, attention_mask=attention_mask)
+        # Calculate the accuracy score
+        accuracy = accuracy_score(test_labels, predicted_labels)
+        print(f"Accuracy: {accuracy}")
 
-    # Convert logits to probabilities
-    probabilities = tf.nn.softmax(predictions.logits, axis=-1).numpy()[0]
+        # Calculate the F1 score
+        f1 = f1_score(test_labels, predicted_labels, average='weighted')
+        print(f"F1 Score: {f1}")
 
-    probabilities = probabilities.astype(float)
-
-    # Pair each label with its corresponding probability
-    label_probabilities = list(zip(label_encoder.classes_, probabilities))
-
-    # Sort the pairs by probability in descending order
-    label_probabilities.sort(key=lambda x: x[1], reverse=True)
-
-    return label_probabilities
-
+    except ValueError:
+        print('ValueError')
 
 if __name__ == "__main__":
     train_intent_bart()

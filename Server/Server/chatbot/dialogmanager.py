@@ -4,8 +4,7 @@ import nltk
 from django.contrib.sessions.backends.db import SessionStore
 from django.http import JsonResponse
 from nltk import word_tokenize
-
-from .models.conversation.models.distilbert.distil_bert_predict import predict_question_intent
+from .models.intent_classification.bert.chatbot_intent_bert_predict import predict_intent_bert
 from .models.conversation.models.transformers.question_answering import generate_response_haystack
 from nltk.corpus import words
 from django.db.utils import OperationalError
@@ -25,18 +24,19 @@ class DialogueManager:
     def process_user_query(self, user_query, intent):
         # Tries to predict intent using BERT
         predictionquery = f'{intent} {user_query}'
-        question_intent = predict_question_intent(predictionquery)
-        # intent must be respected, since we obtain it via diagnostic, in case we cant detect a but intent we use same
-        if question_intent is None or (question_intent is not None and intent.lower() not in question_intent.lower()):
-            results = generate_response_haystack(user_query, intent)
-        else:
-            results = generate_response_haystack(user_query, question_intent)
+        question_intent = predict_intent_bert(predictionquery)
+        # intent must be respected, since we obtain it via diagnostic, in case we cant detect one intent we use same
+        if intent is not None:
+            question_intent = f'{question_intent} {intent}'
+
+
+        results = generate_response_haystack(user_query, question_intent)
 
         return results
 
 
     def generate_bot_response(self, results):
-
+        print(results)
         # in case score is bad we think it is not correct, or we dont know, we ask GPT
         if 'FOLLOW_UP' in results.meta['abstract']:
             try:
@@ -132,7 +132,10 @@ greetings_map = {
     "thank you": "Goodbye, stay safe",
     "how are you": "I am great, how can I help?",
     "all right": "Piece",
-    "ok": "Anything else?"
+    "ok": "Anything else?",
+    "will i die":"I am trained to answer about medical diseases only",
+    "should i see a doctor":"There is no substitute for medical advice, when in doubt always consult with your doctor",
+    "should i see a specialist":"There is no substitute for medical advice, when in doubt always consult with your doctor"
 }
 
 
