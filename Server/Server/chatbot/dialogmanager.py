@@ -31,8 +31,18 @@ class DialogueManager:
         if intent is not None:
             question_intent = f'{question_intent} {intent}'
 
+        # is follow up
+        if self.is_follow_up_query(user_query):
+            try:
+                last_conversation = self.get_last_non_follow_up()
+                results = generate_response_haystack(f'Elaborate in detail about  {last_conversation["user_query"]}',
+                                                     last_conversation["disease_intent"], self.get_conversation_history_document_ids())
+                return results
+            except IndexError:
+                return JsonResponse(
+                    {"role": "ai", "text": "I am sorry but I am missing context to answer correctly to you"})
 
-        results = generate_response_haystack(user_query, question_intent)
+        results = generate_response_haystack(user_query, question_intent, self.get_conversation_history_document_ids())
 
         return results
 
@@ -42,8 +52,11 @@ class DialogueManager:
         # in case score is bad we think it is not correct, or we dont know, we ask GPT
         if 'FOLLOW_UP' in results.meta['abstract']:
             try:
-                last_conversation = self.get_conversation_history()[-1]
-                results = generate_response_haystack(f'Elaborate in detail about {last_conversation.user_query}', last_conversation.disease_intent)
+
+                last_conversation = self.get_last_non_follow_up()
+                results = generate_response_haystack(f'Elaborate in detail about {last_conversation["user_query"]}',
+                                                     last_conversation["disease_intent"],
+                                                     self.get_conversation_history_document_ids())
             except IndexError:
                 return JsonResponse(
                     {"role": "ai", "text": "I am sorry but I am missing context to answer correctly to you"})
@@ -63,7 +76,7 @@ class DialogueManager:
         print(results)
         return JsonResponse({"role": "ai", "text": resp})
 
-    def update_session(self, user_query, bot_response, disease_intent):
+    def update_session(self, user_query, bot_response, disease_intent, document_id):
         # Retrieve existing conversation history from session
         conversation_history = self.session.get('conversation_history', [])
 
@@ -71,7 +84,8 @@ class DialogueManager:
         conversation_history.append({
             'user_query': user_query,
             'bot_response': bot_response.content.decode(),
-            'disease_intent': disease_intent
+            'disease_intent': disease_intent,
+            'document_id': document_id
         })
 
         try:
@@ -82,10 +96,29 @@ class DialogueManager:
             print('Not possible to save the session, please perform django migration for multi turn')
 
 
+    def get_last_non_follow_up(self):
+        # Iterate backward through the conversation history
+        for conversation_turn in reversed(self.get_conversation_history()):
+            # Normalize the user_query by converting it to lowercase
+            user_query = conversation_turn['user_query'].lower()
+            # Check if the user_query is not a follow-up term
+            if user_query not in follow_up_terms:
+                return conversation_turn
+        # If all user queries are follow-up terms, return None or the first conversation turn
+        return None if self.get_conversation_history() else self.get_conversation_history()[0]
+
+
     def get_conversation_history(self):
         # Retrieve conversation history from session
         return self.session.get('conversation_history', [])
 
+
+    def get_conversation_history_document_ids(self):
+        try:
+            conversation_history = self.session.get('conversation_history', [])
+            return [turn['document_id'] for turn in conversation_history]
+        except KeyError:
+            return None
 
     def is_mostly_english(self, sentence, threshold=0.6):
         # Tokenize the sentence into words
@@ -116,6 +149,14 @@ class DialogueManager:
         sentence_no_punctuation = user_query.lower().translate(str.maketrans('', '', string.punctuation))
         return JsonResponse({"role": "ai", "text": greetings_map[sentence_no_punctuation]})
 
+    def is_follow_up_query(self, query):
+        # Normalize the query by converting it to lowercase and removing punctuation
+        normalized_query = query.lower().translate(str.maketrans('', '', string.punctuation))
+
+        # Check if the normalized query matches any of the follow-up terms
+        return normalized_query in follow_up_terms
+
+
 # Set of English words
 english_vocab = set(w.lower() for w in words.words())
 
@@ -142,6 +183,17 @@ greetings_map = {
 
 
 
-
+follow_up_terms = [
+    "how so",
+    "can you please elaborate",
+    "tell me more",
+    "could you clarify that",
+    "i'd like to hear more",
+    "go on",
+    "what do you mean",
+    "can you explain further",
+    "please explain that",
+    "continue"
+]
 
 

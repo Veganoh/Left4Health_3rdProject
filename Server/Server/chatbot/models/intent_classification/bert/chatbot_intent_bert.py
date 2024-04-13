@@ -109,42 +109,54 @@ def train_intent_bart():
     model.compile(optimizer=optimizer, loss=loss, metrics=['accuracy'])
 
     # Train the model
-    model.fit(dataset, epochs=5)
+    model.fit(dataset, epochs=8)
     # Save the fine-tuned model and the label encoder for later use
-    label_encoder_path = os.path.join(current_dir, 'model/label_encoder.pkl')
-    my_fine_tuned_bert = os.path.join(current_dir, 'model/my_fine_tuned_bert')
+    label_encoder_path = os.path.join(current_dir, 'model/label_encoder_v1.pkl')
+    my_fine_tuned_bert = os.path.join(current_dir, 'model/my_fine_tuned_bert_v1')
     model.save_pretrained(my_fine_tuned_bert)
 
     with open(label_encoder_path, 'wb') as le_file:
         pickle.dump(label_encoder, le_file)
 
-    try :
-        # Evaluate the model on the test set
-        result = model.evaluate(test_dataset)
-        print(f"Test Loss: {result[0]}, Test Accuracy: {result[1]}")
+    # Evaluate the model on the test set
+    result = model.evaluate(test_dataset)
+    print(f"Test Loss: {result[0]}, Test Accuracy: {result[1]}")
 
-        # Get predictions for the test set
-        predictions = model.predict(test_dataset)
-        predicted_labels = np.argmax(predictions.logits, axis=1)
+    # Get predictions for the test set
+    predictions = model.predict(test_dataset)
+    predicted_labels = np.argmax(predictions.logits, axis=1)
 
+    try:
         # Calculate the confusion matrix
         conf_matrix = confusion_matrix(test_labels, predicted_labels)
         print(conf_matrix)
+    except ValueError:
+        print('failed to generate confusion matrix')
+    # Calculate the classification report for each class
+    try:
+        # Get the unique labels from the true and predicted labels
+        unique_labels = np.unique(np.concatenate((test_labels, predicted_labels)))
 
-        # Calculate the classification report for each class
-        class_report = classification_report(test_labels, predicted_labels, target_names=label_encoder.classes_)
+        # Calculate the classification report for each class that is present in the true or predicted labels
+        class_report = classification_report(test_labels, predicted_labels, labels=unique_labels,
+                                             target_names=label_encoder.inverse_transform(unique_labels))
         print(class_report)
+    except ValueError:
+        print('failed to generate classification report')
 
+    try:
         # Calculate the accuracy score
         accuracy = accuracy_score(test_labels, predicted_labels)
         print(f"Accuracy: {accuracy}")
-
+    except ValueError:
+        print('failed to calculate accuracy score')
+    try:
         # Calculate the F1 score
         f1 = f1_score(test_labels, predicted_labels, average='weighted')
         print(f"F1 Score: {f1}")
-
     except ValueError:
-        print('ValueError')
+        print('failed to generate f1 score')
+
 
 if __name__ == "__main__":
     train_intent_bart()
