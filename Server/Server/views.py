@@ -6,7 +6,7 @@ from .chatbot.dialogmanager import DialogueManager
 from .chatbot.models.intent_classification.svc.chatloader import generate_intent_svc
 from .chatbot.models.intent_classification.lstm.chatloader_intent_lstm import predict_intent_lstm
 from .chatbot.models.intent_classification.bilstm.chatbot_intent_bilstm_pos import predict_intent_bilstm_pos
-from .chatbot.models.intent_classification.bert.chatbot_intent_bert import predict_intent_bert
+from .chatbot.models.intent_classification.bert.chatbot_intent_bert_predict import predict_intent_bert
 from .chatbot.models.conversation.models.llm.chatgpt import generate_answer_with_intent
 from .chatbot.models.conversation.models.llm.chatgpt import generate_answer_without_intent
 from .chatbot.models.conversation.models.transformers.question_answering import generate_response_haystack
@@ -67,6 +67,12 @@ def text_diagnosis(request):
 
 @csrf_exempt
 def chatbot_message_intent(request, model_type):
+    if not request.session.session_key:
+        request.session.save()
+    print(request.session.session_key)
+    session = SessionStore(session_key=request.session.session_key)
+    session.load()
+    print(session.get('conversation_history'))
 
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
@@ -104,7 +110,8 @@ def chatbot_message_intent(request, model_type):
 
                 # Update session with conversation turn
                 dialogue_manager.update_session(query, bot_response, disease_intent)
-
+                bot_response['Access-Control-Allow-Origin'] = "https://localhost:8000"
+                bot_response['Access-Control-Allow-Credentials'] = "true"
                 return bot_response
             case 'gpt':
                 if process_disease:
@@ -116,6 +123,8 @@ def chatbot_message_intent(request, model_type):
     if request.method == 'OPTIONS':
         response = HttpResponse()
         response['allow'] = 'post'
+        response['Access-Control-Allow-Origin'] = "https://localhost:8000"
+        response['Access-Control-Allow-Credentials'] = "true"
         return response
 
 

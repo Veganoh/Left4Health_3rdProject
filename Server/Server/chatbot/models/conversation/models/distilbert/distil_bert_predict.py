@@ -5,8 +5,8 @@ import os
 import pandas as pd
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-distibert_tokenizer_path = os.path.join(current_dir, 'distibert_tokenizer.pkl')
-distilbert_model_path = os.path.join(current_dir, 'distilbert_model.pth')
+distibert_tokenizer_path = os.path.join(current_dir, 'distil_bert_tokenizer.pkl')
+distilbert_model_path = os.path.join(current_dir, 'distil_bert_model.pth')
 
 # Load dataset
 dataset_full = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../../dataset_with_intents.csv')

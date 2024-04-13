@@ -47,7 +47,8 @@
                }'
                request='{
                "url": "http://localhost:8000/chatbot/intents/haystack",
-               "method": "POST"
+               "method": "POST",
+               "credentials": "include"
                }'
                [requestInterceptor]="requestInterceptor"
                [initialMessages]="initialMessages"
