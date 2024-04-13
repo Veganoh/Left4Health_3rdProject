@@ -26,6 +26,8 @@ class DialogueManager:
         predictionquery = f'{intent} {user_query}'
         question_intent = predict_intent_bert(predictionquery)
         # intent must be respected, since we obtain it via diagnostic, in case we cant detect one intent we use same
+        if question_intent is None:
+            question_intent = ''
         if intent is not None:
             question_intent = f'{question_intent} {intent}'
 

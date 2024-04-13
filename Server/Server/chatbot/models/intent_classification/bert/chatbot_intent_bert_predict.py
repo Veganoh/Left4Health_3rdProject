@@ -7,19 +7,22 @@ import tensorflow as tf
 
 # Initialize the tokenizer
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-
+model = None
 # Get the current directory of the script
 current_dir = os.path.dirname(os.path.abspath(__file__))
+label_encoder_path = os.path.join(current_dir, 'model/label_encoder.pkl')
 try:
     my_fine_tuned_bert = os.path.join(current_dir, 'model/my_fine_tuned_bert')
     model = TFBertForSequenceClassification.from_pretrained(my_fine_tuned_bert)
+    # Load the label encoder
+
+    with open(label_encoder_path, 'rb') as f:
+        label_encoder = pickle.load(f)
+except OSError:
+    print('Model does not exist, must be loaded')
 finally:
     print('Loading of model completed')
 
-    # Load the label encoder
-label_encoder_path = os.path.join(current_dir, 'model/label_encoder.pkl')
-with open(label_encoder_path, 'rb') as f:
-    label_encoder = pickle.load(f)
 
 def predict_intent_bert(text_query):
     # Load the fine-tuned BERT model
