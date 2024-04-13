@@ -67,4 +67,3 @@ def runModel(user_input):
     prediction = model.predict(processed_data)
     disease = prediction[0]
     return disease
-

@@ -5,9 +5,6 @@ import { RequestInterceptor } from 'deep-chat/dist/types/interceptors';
 
 
 
-interface DiagnosisData {
-  diagnosis: { [disease: string]: string };
-}
 
 
 @Component({
@@ -22,10 +19,9 @@ export class DermaDiagnosisComponent {
   inputType = 'Text and Image';
   text: string = '';
   image: File | null = null;
-  diagnosisText : any;
-  diagnosisImage : any;
-  weigthText = 0.7;
-  weigthImage = 0.3;
+  diagnosisImage = '';
+  diagnosisText = '';
+
 
   constructor(private dermaDiagnosisService: DermaDiagnosisService) {}
 
@@ -47,7 +43,11 @@ export class DermaDiagnosisComponent {
       } else if (response && response.diagnosis && this.inputType === 'Text and Image') {
         this.diagnosisText = response.diagnosis;
         if (this.diagnosisImage) {
-          this.disease_intent = mostLikelyDiseaseTwoDiagnosis(this.diagnosisText, this.diagnosisImage, this.weigthText, this.weigthImage);
+          if(this.diagnosisText === this.diagnosisImage){
+            this.disease_intent = this.diagnosisImage;
+          }else{
+            this.disease_intent = this.diagnosisText;
+          }
           this.diagnosis_received = true;
         }
       }
@@ -60,11 +60,10 @@ export class DermaDiagnosisComponent {
       formData.append('image', this.image, 'disease.jpg');
       await this.dermaDiagnosisService.getImageDiagnosis(formData).subscribe((response) => {
         if (response && response.diagnosis && this.inputType === 'Image') {
-          console.log(response.diagnosis)
           this.disease_intent = findDiseaseWithHighestProbability(response.diagnosis);
           if(this.disease_intent != '') this.diagnosis_received = true;
         } else if (response && response.diagnosis && this.inputType === 'Text and Image') {        
-          this.diagnosisImage = response.diagnosis;
+          this.diagnosisImage = findDiseaseWithHighestProbability(response.diagnosis);
           this.handleTextDiagnosis();
         }
       });
@@ -115,39 +114,6 @@ requestInterceptor:RequestInterceptor = (details) => {
 interface DiagnosisData {
   diagnosis: { [disease: string]: string };
 }
-
-function mostLikelyDiseaseTwoDiagnosis(diagnosisA: DiagnosisData, diagnosisB: DiagnosisData, weightA: number, weightB: number): string {
-  let combinedDiagnosis: { [disease: string]: number } = {};
-
-  const diagnosisANumbers: { [disease: string]: number } = convertDiagnosisStringsToNumbers(diagnosisA.diagnosis);
-  const diagnosisBNumbers: { [disease: string]: number } = convertDiagnosisStringsToNumbers(diagnosisB.diagnosis);
-
-  for (const disease in diagnosisANumbers) {
-      if (diagnosisBNumbers[disease] !== undefined) {
-          combinedDiagnosis[disease] = (diagnosisANumbers[disease] * weightA) + (diagnosisBNumbers[disease] * weightB);
-      }
-  }
-
-  let mostLikely: string = "";
-  let highestProbability: number = Number.NEGATIVE_INFINITY;
-  for (const disease in combinedDiagnosis) {
-      if (combinedDiagnosis[disease] > highestProbability) {
-          mostLikely = disease;
-          highestProbability = combinedDiagnosis[disease];
-      }
-  }
-
-  return mostLikely;
-}
-
-function convertDiagnosisStringsToNumbers(diagnosis: { [disease: string]: string }): { [disease: string]: number } {
-  const convertedDiagnosis: { [disease: string]: number } = {};
-  for (const disease in diagnosis) {
-      convertedDiagnosis[disease] = parseFloat(diagnosis[disease]);
-  }
-  return convertedDiagnosis;
-}
-
 
 function findDiseaseWithHighestProbability(data: DiagnosisData): string {
   let maxProbability = Number.NEGATIVE_INFINITY;
