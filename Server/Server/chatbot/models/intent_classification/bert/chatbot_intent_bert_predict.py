@@ -10,9 +10,9 @@ tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = None
 # Get the current directory of the script
 current_dir = os.path.dirname(os.path.abspath(__file__))
-label_encoder_path = os.path.join(current_dir, 'model/label_encoder.pkl')
+label_encoder_path = os.path.join(current_dir, 'model/label_encoder_v1.pkl')
 try:
-    my_fine_tuned_bert = os.path.join(current_dir, 'model/my_fine_tuned_bert')
+    my_fine_tuned_bert = os.path.join(current_dir, 'model/my_fine_tuned_bert_v1')
     model = TFBertForSequenceClassification.from_pretrained(my_fine_tuned_bert)
     # Load the label encoder
 
@@ -57,4 +57,11 @@ def predict_intent_bert(text_query):
     # Sort the pairs by probability in descending order
     label_probabilities.sort(key=lambda x: x[1], reverse=True)
     print(label_probabilities)
-    return label_probabilities[0]
+
+    # Check if the highest probability is over 60%
+    if label_probabilities[0][1] > 0.6:
+        # Return the label with the highest probability
+        return label_probabilities[0]
+    else:
+        # Return None or an appropriate message if the confidence is too low
+        return None  # or return "Low confidence in prediction"

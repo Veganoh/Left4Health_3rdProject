@@ -118,14 +118,26 @@ hybrid_retrieval.connect("embedding_retriever", "document_joiner")
 hybrid_retrieval.connect("document_joiner", "ranker")
 
 
-def generate_response_haystack(query, intent):
+def generate_response_haystack(query, intent, document_ids):
     if intent:
         query = "(" + intent + ") " + query
     print(query)
+    print(document_ids)
     result = hybrid_retrieval.run({"text_embedder": {"text": query}, "bm25_retriever": {"query": query}, "ranker": {"query": query}})
 
-    return result['ranker']['documents'][0]
+    response = find_new_document(result, document_ids)
+    # this could be an array of conversation history so we dont return a follow response same as before
+    return response
 
+
+def find_new_document(result, existing_document_ids):
+    # Iterate through each document in the result
+    for document in result['ranker']['documents']:
+        # Check if the document is not in the existing document IDs
+        if document.id not in existing_document_ids:
+            return document
+    # If no new document is found, return None or an appropriate message
+    return None
 
 ###########  in case there is no acceptable answer in document store we use the generative model
 ########### not in use

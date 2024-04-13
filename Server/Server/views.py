@@ -109,7 +109,7 @@ def chatbot_message_intent(request, model_type):
                 bot_response = dialogue_manager.generate_bot_response(results)
 
                 # Update session with conversation turn
-                dialogue_manager.update_session(query, bot_response, disease_intent)
+                dialogue_manager.update_session(query, bot_response, disease_intent, results.id)
                 bot_response['Access-Control-Allow-Origin'] = "https://localhost:8000"
                 bot_response['Access-Control-Allow-Credentials'] = "true"
                 return bot_response
