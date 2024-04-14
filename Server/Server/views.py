@@ -97,16 +97,31 @@ def chatbot_message_intent(request, model_type):
                 dialogue_manager = DialogueManager()
                 dialogue_manager.set_session(request)
 
+                # Is it jibberish
+
                 if not dialogue_manager.is_mostly_english(query):
                     return dialogue_manager.not_understood()
 
+                # Greetings?
                 if dialogue_manager.is_greeting(query):
                     return dialogue_manager.greet(query)
+
+                # No diagnostic yet?
+                if not disease_intent:
+                    disease_intent = dialogue_manager.get_last_intent_message()
+
+                # New chat?
+                if dialogue_manager.wants_new_chat(query):
+                    disease_intent = None
+                    return dialogue_manager.new_chat_message()
 
                 results = dialogue_manager.process_user_query(query,disease_intent)
 
                 # Generate bot response
                 bot_response = dialogue_manager.generate_bot_response(results)
+
+                if not disease_intent:
+                    disease_intent = results.meta['abstract'].split()[0]
 
                 # Update session with conversation turn
                 dialogue_manager.update_session(query, bot_response, disease_intent, results.id)

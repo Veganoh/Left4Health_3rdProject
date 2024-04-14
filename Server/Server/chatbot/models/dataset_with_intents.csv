@@ -7123,28 +7123,5 @@ Symptoms Psoriasis, Red patches Silvery scales Dry skin Itching Burning Soreness
 Symptoms Urticaria, Red welts Itching Swelling Flaring pain Warmth at the affected skin Angioedema Rapid onset Transient nature, Urticaria,Symptoms
 Symptoms Lupus, Butterfly rash Photosensitivity Discoid lesions Oral ulcers Non-scarring alopecia Raynaud's phenomenon Vasculitis lesions, Lupus,Symptoms
 Symptoms Dermatitis, Redness Inflammation Itching Swelling Blistering Dryness Flaking Cracking Oozing, Dermatitis,Symptoms
-Tell me more,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-Go On,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-Explain in more details,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-Please elaborate further,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-Could you provide additional details?,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-I'd like to hear more about that,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-Can you expand on that?,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-Would you mind going into more depth?,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-Could you clarify that a bit more?,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-I'm interested in hearing more about this,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-Could you provide further insights?,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-Can you give me additional information?,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-I'd appreciate further clarification.,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-Would you mind expanding on that further?,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-Can you delve deeper into the topic?,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-Could you elaborate on that point?,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-I'm eager to learn more about this.,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-Could you provide more context for that statement?,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-I'd like to explore this topic further.,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-Can you break it down into more detail?,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-How So?,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-What do you mean?,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-Can you please explain better?,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-I am confused,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
-I don't get it,FOLLOW_UP_QUESTION,FOLLOW_UP,FOLLOW_UP
+Will I die of this disease?,"""This disease is not fatal please consult a specialist to understand all the consequences""",Dermatitis,Generic
+Is this disease fatal?, """This disease is not fatal please consult a specialist to understand all the consequences""",Dermatitis,Generic

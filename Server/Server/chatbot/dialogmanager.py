@@ -13,13 +13,12 @@ nltk.download('words')
 
 
 class DialogueManager:
-    def __init__(self ):
+    def __init__(self):
         self.session = None
-         # Reference to question answering script
+        # Reference to question answering script
 
     def set_session(self, request):
         self.session = SessionStore(session_key=request.session.session_key)
-
 
     def process_user_query(self, user_query, intent):
         # Tries to predict intent using BERT
@@ -36,9 +35,13 @@ class DialogueManager:
             try:
                 last_conversation = self.get_last_non_follow_up()
                 results = generate_response_haystack(f'Elaborate in detail about  {last_conversation["user_query"]}',
-                                                     last_conversation["disease_intent"], self.get_conversation_history_document_ids())
+                                                     last_conversation["disease_intent"],
+                                                     self.get_conversation_history_document_ids())
                 return results
-            except IndexError:
+            except IndexError as e:
+                print(e)
+                results = {}
+                results.score = 0
                 return JsonResponse(
                     {"role": "ai", "text": "I am sorry but I am missing context to answer correctly to you"})
 
@@ -46,20 +49,9 @@ class DialogueManager:
 
         return results
 
-
     def generate_bot_response(self, results):
         print(results)
-        # in case score is bad we think it is not correct, or we dont know, we ask GPT
-        if 'FOLLOW_UP' in results.meta['abstract']:
-            try:
-
-                last_conversation = self.get_last_non_follow_up()
-                results = generate_response_haystack(f'Elaborate in detail about {last_conversation["user_query"]}',
-                                                     last_conversation["disease_intent"],
-                                                     self.get_conversation_history_document_ids())
-            except IndexError:
-                return JsonResponse(
-                    {"role": "ai", "text": "I am sorry but I am missing context to answer correctly to you"})
+        # in case score is bad we think it is not correct, or we dont know, we could ask GPT
 
         if results.score < 0.4:
             # Return "Disease not detected" as the answer
@@ -95,9 +87,18 @@ class DialogueManager:
         except OperationalError:
             print('Not possible to save the session, please perform django migration for multi turn')
 
+    def get_last_intent_message(self):
+        conversation_history = self.get_conversation_history()
+        try:
+            if conversation_history:
+                return conversation_history[-1]['disease_intent']
+        except Exception as e:
+            return None
 
     def get_last_non_follow_up(self):
         # Iterate backward through the conversation history
+        print('obtaining conv history')
+        print(self.get_conversation_history())
         for conversation_turn in reversed(self.get_conversation_history()):
             # Normalize the user_query by converting it to lowercase
             user_query = conversation_turn['user_query'].lower()
@@ -107,11 +108,9 @@ class DialogueManager:
         # If all user queries are follow-up terms, return None or the first conversation turn
         return None if self.get_conversation_history() else self.get_conversation_history()[0]
 
-
     def get_conversation_history(self):
         # Retrieve conversation history from session
         return self.session.get('conversation_history', [])
-
 
     def get_conversation_history_document_ids(self):
         try:
@@ -132,17 +131,14 @@ class DialogueManager:
         # Check if the percentage of English words is above the threshold
         return english_percentage >= threshold
 
-
     def not_understood(self):
         return JsonResponse({"role": "ai", "text": "I couldn't understand what you said, can you please rephrase?"})
-
 
     def is_greeting(self, user_query):
         # Remove punctuation
         sentence_no_punctuation = user_query.lower().translate(str.maketrans('', '', string.punctuation))
 
         return sentence_no_punctuation in greetings_map
-
 
     def greet(self, user_query):
         # Remove punctuation
@@ -156,10 +152,19 @@ class DialogueManager:
         # Check if the normalized query matches any of the follow-up terms
         return normalized_query in follow_up_terms
 
+    def wants_new_chat(self,query):
+        # Remove punctuation
+        sentence_no_punctuation = query.lower().translate(str.maketrans('', '', string.punctuation))
+
+        return sentence_no_punctuation in new_chat_map
+
+
+    def new_chat_message(self):
+        return JsonResponse({"role": "ai", "text": "OK lets talk about something else"})
+
 
 # Set of English words
 english_vocab = set(w.lower() for w in words.words())
-
 
 greetings_map = {
     "hello": "Hello! How can I assist you today?",
@@ -176,12 +181,10 @@ greetings_map = {
     "how are you": "I am great, how can I help?",
     "all right": "Piece",
     "ok": "Anything else?",
-    "will i die":"I am trained to answer about medical diseases only",
-    "should i see a doctor":"There is no substitute for medical advice, when in doubt always consult with your doctor",
-    "should i see a specialist":"There is no substitute for medical advice, when in doubt always consult with your doctor"
+    "will i die": "I am trained to answer about medical diseases only",
+    "should i see a doctor": "There is no substitute for medical advice, when in doubt always consult with your doctor",
+    "should i see a specialist": "There is no substitute for medical advice, when in doubt always consult with your doctor"
 }
-
-
 
 follow_up_terms = [
     "how so",
@@ -196,4 +199,6 @@ follow_up_terms = [
     "continue"
 ]
 
-
+new_chat_map = [
+    "new chat"
+]
