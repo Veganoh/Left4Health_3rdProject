@@ -119,9 +119,12 @@ hybrid_retrieval.connect("document_joiner", "ranker")
 
 
 def generate_response_haystack(query, intent, document_ids):
+    print(query)
+    print(intent)
+
     if intent:
         query = "(" + intent + ") " + query
-    print(query)
+
     print(document_ids)
     result = hybrid_retrieval.run({"text_embedder": {"text": query}, "bm25_retriever": {"query": query}, "ranker": {"query": query}})
 
