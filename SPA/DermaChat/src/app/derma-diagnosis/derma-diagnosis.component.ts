@@ -16,7 +16,7 @@ import { RequestInterceptor } from 'deep-chat/dist/types/interceptors';
 export class DermaDiagnosisComponent {
   disease_intent = ''
   diagnosis_received = false;
-  inputType = 'Text and Image';
+  inputType = 'Text';
   text: string = '';
   image: File | null = null;
   diagnosisImage = '';
